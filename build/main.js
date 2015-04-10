@@ -44,6 +44,32 @@ jQuery(function($) {
       );
     }
   });
+  var ResultOptionForm = React.createClass({displayName: "ResultOptionForm",
+    handleOptionSubmit: function() {
+      var option = React.findDOMNode(this.refs.r_option).value.trim();
+      var desc = React.findDOMNode(this.refs.r_option_desc).value.trim();
+      if (!option) return;
+      this.props.onResultOptionSubmit({option: option, desc: desc});
+      React.findDOMNode(this.refs.r_option).value = '';
+      React.findDOMNode(this.refs.r_option_desc).value = '';
+      $('#f-option-desc').focus();
+    },
+    render: function() {
+      return (
+        React.createElement("div", {className: "row"}, 
+          React.createElement("div", {className: "col-md-5"}, 
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "选项", ref: "r_option", id: "r-option"})
+          ), 
+          React.createElement("div", {className: "col-md-5"}, 
+            React.createElement("textarea", {type: "text", className: "form-control", placeholder: "内容", ref: "r_option_desc", id: "r-option-desc"})
+          ), 
+          React.createElement("div", {className: "col-md-2"}, 
+            React.createElement("div", {className: "btn btn-info", id: "create-option", onClick: this.handleOptionSubmit}, "添加")
+          )
+        )
+      );
+    }
+  });
   var QuestionForm = React.createClass({displayName: "QuestionForm",
     getInitialState: function() {
       return {options: []};
@@ -86,14 +112,27 @@ jQuery(function($) {
     }
   });
   var Options = React.createClass({displayName: "Options",
-    selectOption: function(e) {
-      $(e.target).addClass('active').siblings().removeClass('active');
-    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         return (
-          React.createElement("p", {"data-title": option.option, "data-id": index, key: index, onClick: this.selectOption}, 
+          React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
           toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
+          )
+        );
+      }.bind(this));//to pass this to function
+      return (
+        React.createElement("div", {className: "optionsList"}, 
+          optionsNodes
+        )
+      )
+    }
+  });
+  var ResultOptions = React.createClass({displayName: "ResultOptions",
+    render: function() {
+      var optionsNodes = this.props.options.map(function(option, index) {
+        return (
+          React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
+          toLetters(index + 1)+ '.' + option.option, React.createElement("br", null), React.createElement("span", {className: "right"}, "跳转到问题 ", option.desc)
           )
         );
       }.bind(this));//to pass this to function
@@ -199,9 +238,34 @@ jQuery(function($) {
       );
     }
   });
+  var ResultForm = React.createClass({displayName: "ResultForm",
+    getInitialState: function() {
+      return {options: []};
+    },
+    handleSubmit: function(e) {
+      e.preventDefault();
+      this.props.onResultSubmit(this.state.options);
+    },
+    handleResultOptionSubmit: function(option) {
+      var options = this.state.options;
+      options.push(option);
+      this.setState({options: options});
+    },
+    render: function() {
+      return (
+        React.createElement("form", {className: "ResultForm", onSubmit: this.handleSubmit}, 
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement(ResultOptionForm, {onResultOptionSubmit: this.handleResultOptionSubmit}), 
+            React.createElement(ResultOptions, {options: this.state.options})
+          ), 
+          React.createElement("button", {type: "submit", className: "btn btn-primary"}, "更新")
+        )
+      )
+    }
+  });
   var ContentBox = React.createClass({displayName: "ContentBox",
     getInitialState: function() {
-      return {data: [], meta: {}};
+      return {data: [], meta: {}, result: []};
     },
     handleQuestionSubmit: function(question) {
       var questions = this.state.data;
@@ -211,11 +275,14 @@ jQuery(function($) {
     },
     handlePageSubmit: function(meta) {
       this.setState({meta: meta})
-      $('#meta-form').empty();
+      $('#question-form').empty();
+      this.previewQuestion();
+    },
+    handleResultSubmit: function(result) {
+      this.setState({result: result});
       this.previewQuestion();
     },
     newQuestion: function(){
-      $('#meta-form').empty();
       $('#result-text').hide();
       $('#question-form').show()
       this.hidePreviewQuestion();
@@ -226,12 +293,17 @@ jQuery(function($) {
     },
     editPage: function() {
       $('#result-text').hide();
-      $('#question-form').empty();
-      $('#meta-form').show();
+      $('#question-form').show();
       this.hidePreviewQuestion();
       React.render(
         React.createElement(PageForm, {onPageSubmit: this.handlePageSubmit, data: this.state.meta}),
-        document.getElementById('meta-form')
+        document.getElementById('question-form')
+      );
+    },
+    editResult: function() {
+      React.render(
+        React.createElement(ResultForm, {onResultSubmit: this.handleResultSubmit, data: this.state.result}),
+        document.getElementById('question-form')
       );
     },
     hidePreviewQuestion: function() {
@@ -239,18 +311,18 @@ jQuery(function($) {
     },
     previewQuestion: function() {
       $('#question-form').hide();
-      $('#meta-form').hide();
       $('#result-text').hide();
       $('#questionlist').show();
       $('.question-box .top-buttons .btn').removeClass('active');
-      $('.question-box .top-buttons .col-md-2:nth-child(3) .btn').addClass('active');
+      $('.question-box .top-buttons .col-md-2:nth-child(4) .btn').addClass('active');
     },
     generateHTML: function() {
-      $('#result-text').show();
+      $('#question-form').show();
       $('#questionlist').hide();
-      $('#question-form').empty();
-      $('#meta-form').empty();
-      console.log(this.state.data);
+      React.render(
+        React.createElement("div", {id: "result-text"}, React.createElement("h4", null, "生成的 HTML"), React.createElement("textarea", {name: "result", rows: "15", className: "form-control"})),
+        document.getElementById('question-form')
+      )
       if (this.state.data.length <= 0) {return};
       var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
       text += React.renderToStaticMarkup(React.createElement(Result, {data: this.state.data, meta: this.state.meta}));
@@ -266,6 +338,9 @@ jQuery(function($) {
             React.createElement("div", {className: "btn btn-default", onClick: this.editPage}, "页面信息")
           ), 
           React.createElement("div", {className: "col-md-2 col-xs-6"}, 
+            React.createElement("div", {className: "btn btn-default", onClick: this.editResult}, "编辑结果")
+          ), 
+          React.createElement("div", {className: "col-md-2 col-xs-6"}, 
             React.createElement("div", {className: "btn btn-default", onClick: this.newQuestion}, "添加问题")
           ), 
           React.createElement("div", {className: "col-md-2 col-xs-6"}, 
@@ -276,10 +351,10 @@ jQuery(function($) {
           )
         ), 
         React.createElement("div", {id: "question-form"}), 
-        React.createElement("div", {id: "meta-form"}), 
         React.createElement("div", {id: "questionlist"}, 
           React.createElement(PageMetas, {data: this.state.meta}), 
-          React.createElement(Questions, {data: this.state.data})
+          React.createElement(Questions, {data: this.state.data}), 
+          React.createElement(ResultOptions, {options: this.state.result})
         )
       )
       );

@@ -44,6 +44,32 @@ jQuery(function($) {
       );
     }
   });
+  var ResultOptionForm = React.createClass({
+    handleOptionSubmit: function() {
+      var option = React.findDOMNode(this.refs.r_option).value.trim();
+      var desc = React.findDOMNode(this.refs.r_option_desc).value.trim();
+      if (!option) return;
+      this.props.onResultOptionSubmit({option: option, desc: desc});
+      React.findDOMNode(this.refs.r_option).value = '';
+      React.findDOMNode(this.refs.r_option_desc).value = '';
+      $('#f-option-desc').focus();
+    },
+    render: function() {
+      return (
+        <div className="row">
+          <div className="col-md-5">
+            <input type="text" className="form-control" placeholder="选项" ref="r_option" id="r-option" />
+          </div>
+          <div className="col-md-5">
+            <textarea type="text" className="form-control" placeholder="内容" ref="r_option_desc" id="r-option-desc" />
+          </div>
+          <div className="col-md-2">
+            <div className="btn btn-info" id="create-option" onClick={this.handleOptionSubmit}>添加</div>
+          </div>
+        </div>
+      );
+    }
+  });
   var QuestionForm = React.createClass({
     getInitialState: function() {
       return {options: []};
@@ -86,14 +112,27 @@ jQuery(function($) {
     }
   });
   var Options = React.createClass({
-    selectOption: function(e) {
-      $(e.target).addClass('active').siblings().removeClass('active');
-    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         return (
-          <p data-title={option.option} data-id={index} key={index} onClick={this.selectOption}>
+          <p data-title={option.option} data-id={index} key={index}>
           {toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span>
+          </p>
+        );
+      }.bind(this));//to pass this to function
+      return (
+        <div className="optionsList">
+          {optionsNodes}
+        </div>
+      )
+    }
+  });
+  var ResultOptions = React.createClass({
+    render: function() {
+      var optionsNodes = this.props.options.map(function(option, index) {
+        return (
+          <p data-title={option.option} data-id={index} key={index}>
+          {toLetters(index + 1)+ '.' + option.option}<br/><span className='right'>跳转到问题 {option.desc}</span>
           </p>
         );
       }.bind(this));//to pass this to function
@@ -199,9 +238,34 @@ jQuery(function($) {
       );
     }
   });
+  var ResultForm = React.createClass({
+    getInitialState: function() {
+      return {options: []};
+    },
+    handleSubmit: function(e) {
+      e.preventDefault();
+      this.props.onResultSubmit(this.state.options);
+    },
+    handleResultOptionSubmit: function(option) {
+      var options = this.state.options;
+      options.push(option);
+      this.setState({options: options});
+    },
+    render: function() {
+      return (
+        <form className="ResultForm" onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <ResultOptionForm onResultOptionSubmit={this.handleResultOptionSubmit}/>
+            <ResultOptions options={this.state.options}/>
+          </div>
+          <button type="submit" className="btn btn-primary">更新</button>
+        </form>
+      )
+    }
+  });
   var ContentBox = React.createClass({
     getInitialState: function() {
-      return {data: [], meta: {}};
+      return {data: [], meta: {}, result: []};
     },
     handleQuestionSubmit: function(question) {
       var questions = this.state.data;
@@ -211,11 +275,14 @@ jQuery(function($) {
     },
     handlePageSubmit: function(meta) {
       this.setState({meta: meta})
-      $('#meta-form').empty();
+      $('#question-form').empty();
+      this.previewQuestion();
+    },
+    handleResultSubmit: function(result) {
+      this.setState({result: result});
       this.previewQuestion();
     },
     newQuestion: function(){
-      $('#meta-form').empty();
       $('#result-text').hide();
       $('#question-form').show()
       this.hidePreviewQuestion();
@@ -226,12 +293,17 @@ jQuery(function($) {
     },
     editPage: function() {
       $('#result-text').hide();
-      $('#question-form').empty();
-      $('#meta-form').show();
+      $('#question-form').show();
       this.hidePreviewQuestion();
       React.render(
         <PageForm onPageSubmit={this.handlePageSubmit} data={this.state.meta}/>,
-        document.getElementById('meta-form')
+        document.getElementById('question-form')
+      );
+    },
+    editResult: function() {
+      React.render(
+        <ResultForm onResultSubmit={this.handleResultSubmit} data={this.state.result}/>,
+        document.getElementById('question-form')
       );
     },
     hidePreviewQuestion: function() {
@@ -239,18 +311,18 @@ jQuery(function($) {
     },
     previewQuestion: function() {
       $('#question-form').hide();
-      $('#meta-form').hide();
       $('#result-text').hide();
       $('#questionlist').show();
       $('.question-box .top-buttons .btn').removeClass('active');
-      $('.question-box .top-buttons .col-md-2:nth-child(3) .btn').addClass('active');
+      $('.question-box .top-buttons .col-md-2:nth-child(4) .btn').addClass('active');
     },
     generateHTML: function() {
-      $('#result-text').show();
+      $('#question-form').show();
       $('#questionlist').hide();
-      $('#question-form').empty();
-      $('#meta-form').empty();
-      console.log(this.state.data);
+      React.render(
+        <div id='result-text'><h4>生成的 HTML</h4><textarea name="result" rows="15" className="form-control"></textarea></div>,
+        document.getElementById('question-form')
+      )
       if (this.state.data.length <= 0) {return};
       var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
       text += React.renderToStaticMarkup(<Result data={this.state.data} meta={this.state.meta}/>);
@@ -266,6 +338,9 @@ jQuery(function($) {
             <div className="btn btn-default" onClick={this.editPage}>页面信息</div>
           </div>
           <div className="col-md-2 col-xs-6">
+            <div className="btn btn-default" onClick={this.editResult}>编辑结果</div>
+          </div>
+          <div className="col-md-2 col-xs-6">
             <div className="btn btn-default" onClick={this.newQuestion}>添加问题</div>
           </div>
           <div className="col-md-2 col-xs-6">
@@ -276,10 +351,10 @@ jQuery(function($) {
           </div>
         </div>
         <div id="question-form"></div>
-        <div id="meta-form"></div>
         <div id="questionlist">
           <PageMetas data={this.state.meta} />
           <Questions data={this.state.data} />
+          <ResultOptions options={this.state.result} />
         </div>
       </div>
       );
