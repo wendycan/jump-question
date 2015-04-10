@@ -13,8 +13,7 @@ jQuery(function($) {
         <div className="question">
           <h4>问题{this.props.index}：{this.props.title}</h4>
           <img src={this.props.image_url}/>
-          <OptionsList options={this.props.options} selected={this.props.answer.index} ></OptionsList>
-          <p> { this.props.answer.desc} </p>
+          <OptionsList options={this.props.options}></OptionsList>
         </div>
       );
     }
@@ -22,18 +21,23 @@ jQuery(function($) {
   var OptionForm = React.createClass({
     handleOptionSubmit: function() {
       var option = React.findDOMNode(this.refs.option).value.trim();
+      var to = React.findDOMNode(this.refs.option_to).value.trim();
       if (!option) return;
-      this.props.onOptionSubmit({option: option});
+      this.props.onOptionSubmit({option: option, to: to});
       React.findDOMNode(this.refs.option).value = '';
+      React.findDOMNode(this.refs.option_to).value = '';
       $('#f-option').focus();
     },
     render: function() {
       return (
         <div className="row">
-          <div className="col-md-11">
-            <input type="text" className="form-control" placeholder="Option" ref="option" id="f-option" />
+          <div className="col-md-5">
+            <input type="text" className="form-control" placeholder="选项" ref="option" id="f-option" />
           </div>
-          <div className="col-md-1">
+          <div className="col-md-5">
+            <input type="text" className="form-control" placeholder="跳转到问题" ref="option_to" id="f-option-to" />
+          </div>
+          <div className="col-md-2">
             <div className="btn btn-info" id="create-option" onClick={this.handleOptionSubmit}>添加</div>
           </div>
         </div>
@@ -48,19 +52,11 @@ jQuery(function($) {
       e.preventDefault();
       var title = React.findDOMNode(this.refs.title).value.trim();
       var url = React.findDOMNode(this.refs.url).value.trim();
-      var answer = {
-        desc: React.findDOMNode(this.refs.answer).value.trim(),
-        index: $('.optionsList .active').data('id')
-      };
-      if (!title || !answer || answer.index === undefined) {
+      if (!title || this.state.options.length < 1) {
         return;
       }
 
-      this.props.onQuestionSubmit({title: title, answer: answer, options: this.state.options, image_url: url});
-      $('#question-form').empty();
-    },
-    cancelAdd: function(e) {
-      e.preventDefault();
+      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url});
       $('#question-form').empty();
     },
     handleOptionSubmit: function(option) {
@@ -80,16 +76,11 @@ jQuery(function($) {
             <input type="text" className="form-control" placeholder="URL" ref="url" id="f-url" />
           </div>
           <div className="form-group">
-            <label htmlFor="f-option">选项<mark>添加后，点击选项选择正确答案。</mark></label>
+            <label htmlFor="f-option">选项</label>
             <OptionForm onOptionSubmit={this.handleOptionSubmit}/>
             <Options options={this.state.options}></Options>
           </div>
-          <div className="form-group">
-            <label  htmlFor="f-answer">答案描述</label>
-            <textarea className="form-control" rows="3" placeholder="Answer" ref="answer" id="f-answer"></textarea>
-          </div>
           <button type="submit" className="btn btn-primary">保存</button>
-          <button className="btn btn-default" onClick={this.cancelAdd}>取消</button>
         </form>
       );
     }
@@ -101,7 +92,9 @@ jQuery(function($) {
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         return (
-          <p data-title={option.option} data-id={index} key={index} onClick={this.selectOption}>{toLetters(index + 1)+ '.' + option.option}</p>
+          <p data-title={option.option} data-id={index} key={index} onClick={this.selectOption}>
+          {toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span>
+          </p>
         );
       }.bind(this));//to pass this to function
       return (
@@ -114,15 +107,9 @@ jQuery(function($) {
   var OptionsList = React.createClass({
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        if (index === this.props.selected) {
-          return (
-            <p key={index} className="active">{toLetters(index + 1)+ '.' + option.option}</p>
-          );
-        } else {
-          return (
-            <p key={index}>{toLetters(index + 1)+ '.' + option.option}</p>
-          );        
-        }
+        return (
+          <p key={index}>{toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span></p>
+        );        
       }.bind(this));
       return (
         <div className="optionsList">
@@ -135,7 +122,7 @@ jQuery(function($) {
     render: function() {
       var questionNodes = this.props.data.map(function(question, index) {
         return (
-          <Question title={question.title} image_url={question.image_url} options={question.options} answer={question.answer} index={index + 1} key={index}>
+          <Question title={question.title} image_url={question.image_url} options={question.options} index={index + 1} key={index}>
           </Question>
         );
       });
@@ -161,23 +148,19 @@ jQuery(function($) {
       var questionNodes = this.props.data.map(function(question, index) {
         var _index = index;
         var optionsNodes = question.options.map(function(option, index) {
-          var isTrue = index === question.answer.index? true:false;
           return (
-            <li data-right={isTrue} key={index} style={{listStyle: 'none'}}>
+            <li key={index} style={{listStyle: 'none'}} data-to={option.to}>
             <input type="radio" name={_index} value={index} id={"f-option-" + _index + '-' + index}/>
-            <label htmlFor={"f-option-" + _index + '-' + index}>{option}</label>
+            <label htmlFor={"f-option-" + _index + '-' + index}>{option.option}</label>
             </li>
           )
         });
+        var display = index == 0? 'block':'none';
         return (
-          <li key={index} className="bm_question"  style={{listStyle: 'none'}}>
+          <li key={index} className="bm_question" data-question-id={index+1} style={{listStyle: 'none', display: display}}>
             <h4>{ index + 1 + '.  ' + question.title }</h4>
             <img src={question.image_url} />
             <ul className="bm_optionList">{optionsNodes}</ul>
-            <div style={{ display: 'none' }} className="bm_result">
-              <div className='right' ><h3>正确</h3><p>{ question.answer.desc }</p></div>
-              <div className='error' ><h3>错误</h3><p>{ question.answer.desc }</p></div>
-            </div>
           </li>
         );
       });
@@ -200,10 +183,6 @@ jQuery(function($) {
         desc: React.findDOMNode(this.refs.desc).value.trim()
       });
     },
-    cancelUpdate: function(e) {
-      e.preventDefault();
-      $('#meta-form').empty();
-    },
     render: function() {
       return (
         <form className="PageForm" onSubmit={this.handleSubmit}>
@@ -216,7 +195,6 @@ jQuery(function($) {
             <textarea className="form-control" placeholder="Desc" row="5" ref="desc" id="f-p-desc" defaultValue={this.props.data.desc}/>
           </div>
           <button type="submit" className="btn btn-primary">更新</button>
-          <button id="cancal-update-meta" className="btn btn-default" onClick={this.cancelUpdate}>取消</button>
         </form>
       );
     }
@@ -272,6 +250,7 @@ jQuery(function($) {
       $('#questionlist').hide();
       $('#question-form').empty();
       $('#meta-form').empty();
+      console.log(this.state.data);
       if (this.state.data.length <= 0) {return};
       var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
       text += React.renderToStaticMarkup(<Result data={this.state.data} meta={this.state.meta}/>);

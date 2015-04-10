@@ -13,8 +13,7 @@ jQuery(function($) {
         React.createElement("div", {className: "question"}, 
           React.createElement("h4", null, "问题", this.props.index, "：", this.props.title), 
           React.createElement("img", {src: this.props.image_url}), 
-          React.createElement(OptionsList, {options: this.props.options, selected: this.props.answer.index}), 
-          React.createElement("p", null, " ",  this.props.answer.desc, " ")
+          React.createElement(OptionsList, {options: this.props.options})
         )
       );
     }
@@ -22,18 +21,23 @@ jQuery(function($) {
   var OptionForm = React.createClass({displayName: "OptionForm",
     handleOptionSubmit: function() {
       var option = React.findDOMNode(this.refs.option).value.trim();
+      var to = React.findDOMNode(this.refs.option_to).value.trim();
       if (!option) return;
-      this.props.onOptionSubmit({option: option});
+      this.props.onOptionSubmit({option: option, to: to});
       React.findDOMNode(this.refs.option).value = '';
+      React.findDOMNode(this.refs.option_to).value = '';
       $('#f-option').focus();
     },
     render: function() {
       return (
         React.createElement("div", {className: "row"}, 
-          React.createElement("div", {className: "col-md-11"}, 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "Option", ref: "option", id: "f-option"})
+          React.createElement("div", {className: "col-md-5"}, 
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "选项", ref: "option", id: "f-option"})
           ), 
-          React.createElement("div", {className: "col-md-1"}, 
+          React.createElement("div", {className: "col-md-5"}, 
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "跳转到问题", ref: "option_to", id: "f-option-to"})
+          ), 
+          React.createElement("div", {className: "col-md-2"}, 
             React.createElement("div", {className: "btn btn-info", id: "create-option", onClick: this.handleOptionSubmit}, "添加")
           )
         )
@@ -48,19 +52,11 @@ jQuery(function($) {
       e.preventDefault();
       var title = React.findDOMNode(this.refs.title).value.trim();
       var url = React.findDOMNode(this.refs.url).value.trim();
-      var answer = {
-        desc: React.findDOMNode(this.refs.answer).value.trim(),
-        index: $('.optionsList .active').data('id')
-      };
-      if (!title || !answer || answer.index === undefined) {
+      if (!title || this.state.options.length < 1) {
         return;
       }
 
-      this.props.onQuestionSubmit({title: title, answer: answer, options: this.state.options, image_url: url});
-      $('#question-form').empty();
-    },
-    cancelAdd: function(e) {
-      e.preventDefault();
+      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url});
       $('#question-form').empty();
     },
     handleOptionSubmit: function(option) {
@@ -80,16 +76,11 @@ jQuery(function($) {
             React.createElement("input", {type: "text", className: "form-control", placeholder: "URL", ref: "url", id: "f-url"})
           ), 
           React.createElement("div", {className: "form-group"}, 
-            React.createElement("label", {htmlFor: "f-option"}, "选项", React.createElement("mark", null, "添加后，点击选项选择正确答案。")), 
+            React.createElement("label", {htmlFor: "f-option"}, "选项"), 
             React.createElement(OptionForm, {onOptionSubmit: this.handleOptionSubmit}), 
             React.createElement(Options, {options: this.state.options})
           ), 
-          React.createElement("div", {className: "form-group"}, 
-            React.createElement("label", {htmlFor: "f-answer"}, "答案描述"), 
-            React.createElement("textarea", {className: "form-control", rows: "3", placeholder: "Answer", ref: "answer", id: "f-answer"})
-          ), 
-          React.createElement("button", {type: "submit", className: "btn btn-primary"}, "保存"), 
-          React.createElement("button", {className: "btn btn-default", onClick: this.cancelAdd}, "取消")
+          React.createElement("button", {type: "submit", className: "btn btn-primary"}, "保存")
         )
       );
     }
@@ -101,7 +92,9 @@ jQuery(function($) {
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         return (
-          React.createElement("p", {"data-title": option.option, "data-id": index, key: index, onClick: this.selectOption}, toLetters(index + 1)+ '.' + option.option)
+          React.createElement("p", {"data-title": option.option, "data-id": index, key: index, onClick: this.selectOption}, 
+          toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
+          )
         );
       }.bind(this));//to pass this to function
       return (
@@ -114,15 +107,9 @@ jQuery(function($) {
   var OptionsList = React.createClass({displayName: "OptionsList",
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        if (index === this.props.selected) {
-          return (
-            React.createElement("p", {key: index, className: "active"}, toLetters(index + 1)+ '.' + option.option)
-          );
-        } else {
-          return (
-            React.createElement("p", {key: index}, toLetters(index + 1)+ '.' + option.option)
-          );        
-        }
+        return (
+          React.createElement("p", {key: index}, toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to))
+        );        
       }.bind(this));
       return (
         React.createElement("div", {className: "optionsList"}, 
@@ -135,7 +122,7 @@ jQuery(function($) {
     render: function() {
       var questionNodes = this.props.data.map(function(question, index) {
         return (
-          React.createElement(Question, {title: question.title, image_url: question.image_url, options: question.options, answer: question.answer, index: index + 1, key: index}
+          React.createElement(Question, {title: question.title, image_url: question.image_url, options: question.options, index: index + 1, key: index}
           )
         );
       });
@@ -161,23 +148,19 @@ jQuery(function($) {
       var questionNodes = this.props.data.map(function(question, index) {
         var _index = index;
         var optionsNodes = question.options.map(function(option, index) {
-          var isTrue = index === question.answer.index? true:false;
           return (
-            React.createElement("li", {"data-right": isTrue, key: index, style: {listStyle: 'none'}}, 
+            React.createElement("li", {key: index, style: {listStyle: 'none'}, "data-to": option.to}, 
             React.createElement("input", {type: "radio", name: _index, value: index, id: "f-option-" + _index + '-' + index}), 
-            React.createElement("label", {htmlFor: "f-option-" + _index + '-' + index}, option)
+            React.createElement("label", {htmlFor: "f-option-" + _index + '-' + index}, option.option)
             )
           )
         });
+        var display = index == 0? 'block':'none';
         return (
-          React.createElement("li", {key: index, className: "bm_question", style: {listStyle: 'none'}}, 
+          React.createElement("li", {key: index, className: "bm_question", "data-question-id": index+1, style: {listStyle: 'none', display: display}}, 
             React.createElement("h4", null,  index + 1 + '.  ' + question.title), 
             React.createElement("img", {src: question.image_url}), 
-            React.createElement("ul", {className: "bm_optionList"}, optionsNodes), 
-            React.createElement("div", {style: { display: 'none'}, className: "bm_result"}, 
-              React.createElement("div", {className: "right"}, React.createElement("h3", null, "正确"), React.createElement("p", null,  question.answer.desc)), 
-              React.createElement("div", {className: "error"}, React.createElement("h3", null, "错误"), React.createElement("p", null,  question.answer.desc))
-            )
+            React.createElement("ul", {className: "bm_optionList"}, optionsNodes)
           )
         );
       });
@@ -200,10 +183,6 @@ jQuery(function($) {
         desc: React.findDOMNode(this.refs.desc).value.trim()
       });
     },
-    cancelUpdate: function(e) {
-      e.preventDefault();
-      $('#meta-form').empty();
-    },
     render: function() {
       return (
         React.createElement("form", {className: "PageForm", onSubmit: this.handleSubmit}, 
@@ -215,8 +194,7 @@ jQuery(function($) {
             React.createElement("label", {htmlFor: "f-p-desc"}, "描述"), 
             React.createElement("textarea", {className: "form-control", placeholder: "Desc", row: "5", ref: "desc", id: "f-p-desc", defaultValue: this.props.data.desc})
           ), 
-          React.createElement("button", {type: "submit", className: "btn btn-primary"}, "更新"), 
-          React.createElement("button", {id: "cancal-update-meta", className: "btn btn-default", onClick: this.cancelUpdate}, "取消")
+          React.createElement("button", {type: "submit", className: "btn btn-primary"}, "更新")
         )
       );
     }
@@ -272,6 +250,7 @@ jQuery(function($) {
       $('#questionlist').hide();
       $('#question-form').empty();
       $('#meta-form').empty();
+      console.log(this.state.data);
       if (this.state.data.length <= 0) {return};
       var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
       text += React.renderToStaticMarkup(React.createElement(Result, {data: this.state.data, meta: this.state.meta}));
