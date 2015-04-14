@@ -143,13 +143,28 @@ jQuery(function($) {
     }
   });
   var ResultOptions = React.createClass({displayName: "ResultOptions",
+    deleteOption: function(e) {
+      var option_id = $(e.currentTarget).parent().data('id');
+      this.props.onDeleteOption(option_id);
+    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        return (
-          React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
-          toLetters(index + 1) + ': ' + option.desc
-          )
-        );
+        if(this.props.isEdit == 'true') {
+          return (
+            React.createElement("div", {"data-id": index, key: index}, 
+              React.createElement("p", {"data-title": option.option, "data-id": index, className: "col-md-11"}, 
+              toLetters(index + 1) + ': ' + option.desc
+              ), 
+              React.createElement("p", {className: "col-md-1", onClick: this.deleteOption}, React.createElement("a", null, "删除"))
+            )
+          );
+        } else {
+          return (
+            React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
+            toLetters(index + 1) + ': ' + option.desc
+            )
+          );          
+        }
       }.bind(this));//to pass this to function
       return (
         React.createElement("div", {className: "optionsList"}, 
@@ -272,7 +287,12 @@ jQuery(function($) {
   });
   var ResultForm = React.createClass({displayName: "ResultForm",
     getInitialState: function() {
-      return {options: []};
+      return {options: this.props.data};
+    },
+    deleteOption: function(index) {
+      var options = this.state.options;
+      options.splice(index,1);
+      this.setState({options: options});
     },
     handleSubmit: function(e) {
       e.preventDefault();
@@ -288,7 +308,7 @@ jQuery(function($) {
         React.createElement("form", {className: "ResultForm", onSubmit: this.handleSubmit}, 
           React.createElement("div", {className: "form-group"}, 
             React.createElement(ResultOptionForm, {onResultOptionSubmit: this.handleResultOptionSubmit}), 
-            React.createElement(ResultOptions, {options: this.state.options})
+            React.createElement(ResultOptions, {options: this.state.options, onDeleteOption: this.deleteOption, isEdit: "true"})
           ), 
           React.createElement("button", {type: "submit", className: "btn btn-primary"}, "更新")
         )

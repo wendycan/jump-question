@@ -143,13 +143,28 @@ jQuery(function($) {
     }
   });
   var ResultOptions = React.createClass({
+    deleteOption: function(e) {
+      var option_id = $(e.currentTarget).parent().data('id');
+      this.props.onDeleteOption(option_id);
+    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        return (
-          <p data-title={option.option} data-id={index} key={index}>
-          {toLetters(index + 1) + ': ' + option.desc}
-          </p>
-        );
+        if(this.props.isEdit == 'true') {
+          return (
+            <div data-id={index} key={index}>
+              <p data-title={option.option} data-id={index} className='col-md-11'>
+              {toLetters(index + 1) + ': ' + option.desc}
+              </p>
+              <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
+            </div>
+          );
+        } else {
+          return (
+            <p data-title={option.option} data-id={index} key={index}>
+            {toLetters(index + 1) + ': ' + option.desc}
+            </p>
+          );          
+        }
       }.bind(this));//to pass this to function
       return (
         <div className="optionsList">
@@ -272,7 +287,12 @@ jQuery(function($) {
   });
   var ResultForm = React.createClass({
     getInitialState: function() {
-      return {options: []};
+      return {options: this.props.data};
+    },
+    deleteOption: function(index) {
+      var options = this.state.options;
+      options.splice(index,1);
+      this.setState({options: options});
     },
     handleSubmit: function(e) {
       e.preventDefault();
@@ -288,7 +308,7 @@ jQuery(function($) {
         <form className="ResultForm" onSubmit={this.handleSubmit}>
           <div className="form-group">
             <ResultOptionForm onResultOptionSubmit={this.handleResultOptionSubmit}/>
-            <ResultOptions options={this.state.options}/>
+            <ResultOptions options={this.state.options} onDeleteOption={this.deleteOption} isEdit='true'/>
           </div>
           <button type="submit" className="btn btn-primary">更新</button>
         </form>
