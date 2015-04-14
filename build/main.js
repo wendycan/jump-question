@@ -13,7 +13,7 @@ jQuery(function($) {
         React.createElement("div", {className: "question"}, 
           React.createElement("h4", null, "问题", this.props.index, "：", this.props.title), 
           React.createElement("img", {src: this.props.image_url}), 
-          React.createElement(OptionsList, {options: this.props.options})
+          React.createElement(OptionsList, {options: this.props.options, isLast: this.props.isLast})
         )
       );
     }
@@ -22,7 +22,7 @@ jQuery(function($) {
     handleOptionSubmit: function() {
       var option = React.findDOMNode(this.refs.option).value.trim();
       var to = React.findDOMNode(this.refs.option_to).value.trim();
-      if (!option) return;
+      if (!option) return
       this.props.onOptionSubmit({option: option, to: to});
       React.findDOMNode(this.refs.option).value = '';
       React.findDOMNode(this.refs.option_to).value = '';
@@ -31,13 +31,13 @@ jQuery(function($) {
     render: function() {
       return (
         React.createElement("div", {className: "row"}, 
-          React.createElement("div", {className: "col-md-5"}, 
+          React.createElement("div", {className: "col-md-9"}, 
             React.createElement("input", {type: "text", className: "form-control", placeholder: "选项", ref: "option", id: "f-option"})
           ), 
-          React.createElement("div", {className: "col-md-5"}, 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "跳转到问题", ref: "option_to", id: "f-option-to"})
-          ), 
           React.createElement("div", {className: "col-md-2"}, 
+            React.createElement("input", {type: "number", min: "1", className: "form-control", placeholder: "跳转到问题序号", ref: "option_to", id: "f-option-to"})
+          ), 
+          React.createElement("div", {className: "col-md-1"}, 
             React.createElement("div", {className: "btn btn-info", id: "create-option", onClick: this.handleOptionSubmit}, "添加")
           )
         )
@@ -46,21 +46,15 @@ jQuery(function($) {
   });
   var ResultOptionForm = React.createClass({displayName: "ResultOptionForm",
     handleOptionSubmit: function() {
-      var option = React.findDOMNode(this.refs.r_option).value.trim();
       var desc = React.findDOMNode(this.refs.r_option_desc).value.trim();
-      if (!option) return;
-      this.props.onResultOptionSubmit({option: option, desc: desc});
-      React.findDOMNode(this.refs.r_option).value = '';
+      this.props.onResultOptionSubmit({desc: desc});
       React.findDOMNode(this.refs.r_option_desc).value = '';
       $('#f-option-desc').focus();
     },
     render: function() {
       return (
         React.createElement("div", {className: "row"}, 
-          React.createElement("div", {className: "col-md-5"}, 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "选项", ref: "r_option", id: "r-option"})
-          ), 
-          React.createElement("div", {className: "col-md-5"}, 
+          React.createElement("div", {className: "col-md-10"}, 
             React.createElement("textarea", {type: "text", className: "form-control", placeholder: "内容", ref: "r_option_desc", id: "r-option-desc"})
           ), 
           React.createElement("div", {className: "col-md-2"}, 
@@ -78,21 +72,34 @@ jQuery(function($) {
       e.preventDefault();
       var title = React.findDOMNode(this.refs.title).value.trim();
       var url = React.findDOMNode(this.refs.url).value.trim();
+      var isLast = $('#f-option-to').prop('disabled');
       if (!title || this.state.options.length < 1) {
         return;
       }
 
-      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url});
-      $('#question-form').empty();
+      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      $('#question-container').empty();
     },
     handleOptionSubmit: function(option) {
       var options = this.state.options;
       options.push(option);
       this.setState({options: options});
     },
+    lastStatuschange: function() {
+      if ($("input[type='checkbox']").is(":checked")) {
+        $('#f-option-to').prop('disabled', true);
+        $('.optionsList .right').css('display','none');
+      } else {
+        $('#f-option-to').prop('disabled', false);
+      }
+    },
     render: function() {
       return (
         React.createElement("form", {className: "questionForm", onSubmit: this.handleSubmit}, 
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("input", {id: "f-last", ref: "last", type: "checkbox", onChange: this.lastStatuschange}), 
+            React.createElement("label", {htmlFor: "f-last"}, " 是最后一个问题")
+          ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-title"}, "问题"), 
             React.createElement("input", {type: "text", className: "form-control", placeholder: "Title", ref: "title", id: "f-title"})
@@ -114,11 +121,19 @@ jQuery(function($) {
   var Options = React.createClass({displayName: "Options",
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        return (
-          React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
-          toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
-          )
-        );
+        if($('#f-option-to').prop('disabled')){
+          return (
+            React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
+            toLetters(index + 1)+ '.' + option.option
+            )
+          );
+        } else {
+          return (
+            React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
+            toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
+            )
+          );
+        }
       }.bind(this));//to pass this to function
       return (
         React.createElement("div", {className: "optionsList"}, 
@@ -132,7 +147,7 @@ jQuery(function($) {
       var optionsNodes = this.props.options.map(function(option, index) {
         return (
           React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
-          toLetters(index + 1)+ '.' + option.option, React.createElement("br", null), React.createElement("span", {className: "right"}, "跳转到问题 ", option.desc)
+          toLetters(index + 1) + ': ' + option.desc
           )
         );
       }.bind(this));//to pass this to function
@@ -146,9 +161,15 @@ jQuery(function($) {
   var OptionsList = React.createClass({displayName: "OptionsList",
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
-        return (
-          React.createElement("p", {key: index}, toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to))
-        );        
+        if(this.props.isLast) {
+          return (
+            React.createElement("p", {key: index}, toLetters(index + 1)+ '.' + option.option)
+          );                  
+        } else {
+          return (
+            React.createElement("p", {key: index}, toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to))
+          );                  
+        }
       }.bind(this));
       return (
         React.createElement("div", {className: "optionsList"}, 
@@ -161,7 +182,7 @@ jQuery(function($) {
     render: function() {
       var questionNodes = this.props.data.map(function(question, index) {
         return (
-          React.createElement(Question, {title: question.title, image_url: question.image_url, options: question.options, index: index + 1, key: index}
+          React.createElement(Question, {title: question.title, isLast: question.isLast, image_url: question.image_url, options: question.options, index: index + 1, key: index}
           )
         );
       });
@@ -188,27 +209,38 @@ jQuery(function($) {
         var _index = index;
         var optionsNodes = question.options.map(function(option, index) {
           return (
-            React.createElement("li", {key: index, style: {listStyle: 'none'}, "data-to": option.to}, 
+            React.createElement("li", {key: index, style: {listStyle: 'none'}, "data-to": option.to, "data-option-index": index+1}, 
             React.createElement("input", {type: "radio", name: _index, value: index, id: "f-option-" + _index + '-' + index}), 
             React.createElement("label", {htmlFor: "f-option-" + _index + '-' + index}, option.option)
             )
-          )
+          );
         });
         var display = index == 0? 'block':'none';
         return (
-          React.createElement("li", {key: index, className: "bm_question", "data-question-id": index+1, style: {listStyle: 'none', display: display}}, 
+          React.createElement("li", {key: index, className: "bm_question", "data-islast": question.isLast, "data-question-id": index+1, style: {listStyle: 'none', display: display}}, 
             React.createElement("h4", null,  index + 1 + '.  ' + question.title), 
             React.createElement("img", {src: question.image_url}), 
             React.createElement("ul", {className: "bm_optionList"}, optionsNodes)
           )
         );
       });
+      var resultNodes = this.props.result.map(function(r,index) {
+        return (
+          React.createElement("li", {"data-result-index": index+1, style: {listStyle: 'none',display: 'none'}}, 
+            React.createElement("p", null, r.desc)
+          )
+        );
+      });
+
       return (
         React.createElement("div", {className: "bm_page"}, 
           React.createElement("h3", null, this.props.meta.title), 
           React.createElement("p", null, this.props.meta.desc), 
           React.createElement("ul", {className: "bm_questionList"}, 
             questionNodes
+          ), 
+          React.createElement("ul", {className: "bm_results", style: {display: 'none'}}, 
+            resultNodes
           )
         )
       );
@@ -270,66 +302,56 @@ jQuery(function($) {
     handleQuestionSubmit: function(question) {
       var questions = this.state.data;
       questions.push(question);
-      this.setState({data: questions});
-      this.previewQuestion();
+      this.setState({data: questions}, this.previewQuestion);
     },
     handlePageSubmit: function(meta) {
-      this.setState({meta: meta})
-      $('#question-form').empty();
-      this.previewQuestion();
+      this.setState({meta: meta}, this.previewQuestion)
     },
     handleResultSubmit: function(result) {
-      this.setState({result: result});
-      this.previewQuestion();
+      this.setState({result: result}, this.previewQuestion);
     },
     newQuestion: function(){
-      $('#result-text').hide();
-      $('#question-form').show()
-      this.hidePreviewQuestion();
       React.render(
         React.createElement(QuestionForm, {onQuestionSubmit: this.handleQuestionSubmit}),
-        document.getElementById('question-form')
+        document.getElementById('question-container')
       );
     },
     editPage: function() {
-      $('#result-text').hide();
-      $('#question-form').show();
-      this.hidePreviewQuestion();
       React.render(
         React.createElement(PageForm, {onPageSubmit: this.handlePageSubmit, data: this.state.meta}),
-        document.getElementById('question-form')
+        document.getElementById('question-container')
       );
     },
     editResult: function() {
       React.render(
         React.createElement(ResultForm, {onResultSubmit: this.handleResultSubmit, data: this.state.result}),
-        document.getElementById('question-form')
+        document.getElementById('question-container')
       );
     },
-    hidePreviewQuestion: function() {
-      $('#questionlist').hide();
-    },
     previewQuestion: function() {
-      $('#question-form').hide();
-      $('#result-text').hide();
-      $('#questionlist').show();
+      React.render(
+        React.createElement("div", null, 
+          React.createElement(PageMetas, {data: this.state.meta}), 
+          React.createElement(Questions, {data: this.state.data}), 
+          React.createElement("h4", null, "结果"), 
+          React.createElement(ResultOptions, {options: this.state.result})
+        ),
+        document.getElementById('question-container')
+      );
       $('.question-box .top-buttons .btn').removeClass('active');
       $('.question-box .top-buttons .col-md-2:nth-child(4) .btn').addClass('active');
     },
     generateHTML: function() {
-      $('#question-form').show();
-      $('#questionlist').hide();
+      $('#question-container').empty();
       React.render(
         React.createElement("div", {id: "result-text"}, React.createElement("h4", null, "生成的 HTML"), React.createElement("textarea", {name: "result", rows: "15", className: "form-control"})),
-        document.getElementById('question-form')
+        document.getElementById('question-container')
       )
-      if (this.state.data.length <= 0) {return};
       var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
-      text += React.renderToStaticMarkup(React.createElement(Result, {data: this.state.data, meta: this.state.meta}));
+      text += React.renderToStaticMarkup(React.createElement(Result, {data: this.state.data, meta: this.state.meta, result: this.state.result}));
       text += '<link rel="stylesheet" type="text/css" href="' + cssUrl + '">';
       text += '<script type="text/javascript" src="' + jsUrl + '"></script></body></html>';
       $('#result-text textarea').val(text);
-      $('#result-text').css('display', 'block');
     },
     render: function() {
       return (React.createElement("div", {className: "question-box"}, 
@@ -350,12 +372,7 @@ jQuery(function($) {
             React.createElement("div", {className: "btn btn-default", onClick: this.generateHTML}, "生成 HTML")
           )
         ), 
-        React.createElement("div", {id: "question-form"}), 
-        React.createElement("div", {id: "questionlist"}, 
-          React.createElement(PageMetas, {data: this.state.meta}), 
-          React.createElement(Questions, {data: this.state.data}), 
-          React.createElement(ResultOptions, {options: this.state.result})
-        )
+        React.createElement("div", {id: "question-container"})
       )
       );
     }

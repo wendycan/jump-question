@@ -16,10 +16,22 @@ window.addEventListener('DOMContentLoaded', function(){
   $.toArray(inputs).forEach(function(input){
       input.addEventListener('click', function(e){
         var target_li = e.currentTarget.parentNode;
-        var to = target_li.getAttribute('data-to');
-        var next_question = document.querySelector("[data-question-id='"+to+"']");
-        var this_question = target_li.parentNode.parentNode.style.display = 'none';
-        next_question.style.display = 'block';
+        var this_question = target_li.parentNode.parentNode;
+        var isLast = this_question.getAttribute('data-islast');
+        if(isLast == 'true'){
+          $.toArray(target_li.parentNode.querySelectorAll('input')).forEach(function(el) {
+            el.disabled = "disabled";
+          });
+          target_li.className += ' active';
+          var target_id = target_li.getAttribute('data-option-index');
+          document.querySelector("[data-result-index='"+target_id+"']").style.display = 'block';
+          document.querySelector('.bm_results').style.display = 'block';
+        } else {
+          var to = target_li.getAttribute('data-to');
+          var next_question = document.querySelector("[data-question-id='"+to+"']");
+          this_question.style.display = 'none';
+          next_question.style.display = 'block';          
+        }
     });
   });
 }, false)
