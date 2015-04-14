@@ -22,7 +22,7 @@ jQuery(function($) {
     handleOptionSubmit: function() {
       var option = React.findDOMNode(this.refs.option).value.trim();
       var to = React.findDOMNode(this.refs.option_to).value.trim();
-      if (!option) return
+      if (!option || !to || to <= 0) return
       this.props.onOptionSubmit({option: option, to: to});
       React.findDOMNode(this.refs.option).value = '';
       React.findDOMNode(this.refs.option_to).value = '';
