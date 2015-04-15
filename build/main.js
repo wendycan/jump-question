@@ -50,6 +50,7 @@ jQuery(function($) {
   var ResultOptionForm = React.createClass({displayName: "ResultOptionForm",
     handleOptionSubmit: function() {
       var desc = React.findDOMNode(this.refs.r_option_desc).value.trim();
+      if(!desc) return;
       this.props.onResultOptionSubmit({desc: desc});
       React.findDOMNode(this.refs.r_option_desc).value = '';
       $('#f-option-desc').focus();
