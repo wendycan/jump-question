@@ -8,10 +8,13 @@ jQuery(function($) {
   var jsUrl = 'http://localhost:8000/js/result.js';
   var cssUrl = 'http://localhost:8000/css/result.css'
   var Question = React.createClass({
+    edit: function() {
+      this.props.onEditQuestion({id:this.props.index-1});
+    },
     render: function() {
       return (
         <div className="question">
-          <h4>问题{this.props.index}：{this.props.title}</h4>
+          <h4>问题{this.props.index}：{this.props.title}<a onClick={this.edit} className='right'>编辑</a></h4>
           <img src={this.props.image_url}/>
           <OptionsList options={this.props.options} isLast={this.props.isLast}></OptionsList>
         </div>
@@ -66,7 +69,11 @@ jQuery(function($) {
   });
   var QuestionForm = React.createClass({
     getInitialState: function() {
-      return {options: []};
+      if(this.props.isEdit){
+        return {options: this.props.question.options};
+      } else {
+        return {options: []};
+      }
     },
     handleSubmit: function(e) {
       e.preventDefault();
@@ -77,7 +84,11 @@ jQuery(function($) {
         return;
       }
 
-      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      if(this.props.isEdit){
+        this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast},this.props.question_id.id);
+      } else {
+        this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      }
       $('#question-container').empty();
     },
     handleOptionSubmit: function(option) {
@@ -93,6 +104,13 @@ jQuery(function($) {
         $('#f-option-to').prop('disabled', false);
       }
     },
+    componentDidMount: function() {
+      if(this.props.question && this.props.question.isLast) {
+        $("#f-last").prop('checked', true);
+      } else {
+        $("#f-last").prop('checked', false);
+      }
+    },
     render: function() {
       return (
         <form className="questionForm" onSubmit={this.handleSubmit}>
@@ -102,11 +120,11 @@ jQuery(function($) {
           </div>
           <div className="form-group">
             <label htmlFor="f-title">问题</label>
-            <input type="text" className="form-control" placeholder="Title" ref="title" id="f-title" />
+            <input type="text" className="form-control" placeholder="Title" ref="title" id="f-title" defaultValue={this.props.question&&this.props.question.title} />
           </div>
           <div className="form-group">
             <label htmlFor="f-url">图片地址</label>
-            <input type="text" className="form-control" placeholder="URL" ref="url" id="f-url" />
+            <input type="text" className="form-control" placeholder="URL" ref="url" id="f-url" defaultValue={this.props.question&&this.props.question.image_url} />
           </div>
           <div className="form-group">
             <label htmlFor="f-option">选项</label>
@@ -194,13 +212,16 @@ jQuery(function($) {
     }
   });
   var Questions = React.createClass({
+    editQuestion: function(id) {
+      this.props.onEditQuestion(id);
+    },
     render: function() {
       var questionNodes = this.props.data.map(function(question, index) {
         return (
-          <Question title={question.title} isLast={question.isLast} image_url={question.image_url} options={question.options} index={index + 1} key={index}>
+          <Question onEditQuestion={this.editQuestion} title={question.title} isLast={question.isLast} image_url={question.image_url} options={question.options} index={index + 1} key={index}>
           </Question>
         );
-      });
+      }.bind(this));
       return (
         <div className="questionList">
           {questionNodes}
@@ -330,6 +351,11 @@ jQuery(function($) {
     handleResultSubmit: function(result) {
       this.setState({result: result}, this.previewQuestion);
     },
+    handleQuestionEditSubmit: function(question, id) {
+      var questions = this.state.data;
+      questions[id] = question;
+      this.setState({data: questions}, this.previewQuestion);
+    },
     newQuestion: function(){
       React.render(
         <QuestionForm onQuestionSubmit={this.handleQuestionSubmit}/>,
@@ -348,11 +374,17 @@ jQuery(function($) {
         document.getElementById('question-container')
       );
     },
+    editQuestion: function(id) {
+      React.render(
+        <QuestionForm onQuestionSubmit={this.handleQuestionEditSubmit} question_id={id} question={this.state.data[id.id]} isEdit='true' />,
+        document.getElementById('question-container')
+      );
+    },
     previewQuestion: function() {
       React.render(
         <div>
           <PageMetas data={this.state.meta} />
-          <Questions data={this.state.data} />
+          <Questions onEditQuestion={this.editQuestion} data={this.state.data} />
           <h4>结果</h4>
           <ResultOptions options={this.state.result} />
         </div>,

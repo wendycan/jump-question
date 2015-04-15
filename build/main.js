@@ -8,10 +8,13 @@ jQuery(function($) {
   var jsUrl = 'http://localhost:8000/js/result.js';
   var cssUrl = 'http://localhost:8000/css/result.css'
   var Question = React.createClass({displayName: "Question",
+    edit: function() {
+      this.props.onEditQuestion({id:this.props.index-1});
+    },
     render: function() {
       return (
         React.createElement("div", {className: "question"}, 
-          React.createElement("h4", null, "问题", this.props.index, "：", this.props.title), 
+          React.createElement("h4", null, "问题", this.props.index, "：", this.props.title, React.createElement("a", {onClick: this.edit, className: "right"}, "编辑")), 
           React.createElement("img", {src: this.props.image_url}), 
           React.createElement(OptionsList, {options: this.props.options, isLast: this.props.isLast})
         )
@@ -66,7 +69,11 @@ jQuery(function($) {
   });
   var QuestionForm = React.createClass({displayName: "QuestionForm",
     getInitialState: function() {
-      return {options: []};
+      if(this.props.isEdit){
+        return {options: this.props.question.options};
+      } else {
+        return {options: []};
+      }
     },
     handleSubmit: function(e) {
       e.preventDefault();
@@ -77,7 +84,11 @@ jQuery(function($) {
         return;
       }
 
-      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      if(this.props.isEdit){
+        this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast},this.props.question_id.id);
+      } else {
+        this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      }
       $('#question-container').empty();
     },
     handleOptionSubmit: function(option) {
@@ -93,6 +104,13 @@ jQuery(function($) {
         $('#f-option-to').prop('disabled', false);
       }
     },
+    componentDidMount: function() {
+      if(this.props.question && this.props.question.isLast) {
+        $("#f-last").prop('checked', true);
+      } else {
+        $("#f-last").prop('checked', false);
+      }
+    },
     render: function() {
       return (
         React.createElement("form", {className: "questionForm", onSubmit: this.handleSubmit}, 
@@ -102,11 +120,11 @@ jQuery(function($) {
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-title"}, "问题"), 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "Title", ref: "title", id: "f-title"})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "Title", ref: "title", id: "f-title", defaultValue: this.props.question&&this.props.question.title})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-url"}, "图片地址"), 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "URL", ref: "url", id: "f-url"})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "URL", ref: "url", id: "f-url", defaultValue: this.props.question&&this.props.question.image_url})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-option"}, "选项"), 
@@ -194,13 +212,16 @@ jQuery(function($) {
     }
   });
   var Questions = React.createClass({displayName: "Questions",
+    editQuestion: function(id) {
+      this.props.onEditQuestion(id);
+    },
     render: function() {
       var questionNodes = this.props.data.map(function(question, index) {
         return (
-          React.createElement(Question, {title: question.title, isLast: question.isLast, image_url: question.image_url, options: question.options, index: index + 1, key: index}
+          React.createElement(Question, {onEditQuestion: this.editQuestion, title: question.title, isLast: question.isLast, image_url: question.image_url, options: question.options, index: index + 1, key: index}
           )
         );
-      });
+      }.bind(this));
       return (
         React.createElement("div", {className: "questionList"}, 
           questionNodes
@@ -330,6 +351,11 @@ jQuery(function($) {
     handleResultSubmit: function(result) {
       this.setState({result: result}, this.previewQuestion);
     },
+    handleQuestionEditSubmit: function(question, id) {
+      var questions = this.state.data;
+      questions[id] = question;
+      this.setState({data: questions}, this.previewQuestion);
+    },
     newQuestion: function(){
       React.render(
         React.createElement(QuestionForm, {onQuestionSubmit: this.handleQuestionSubmit}),
@@ -348,11 +374,17 @@ jQuery(function($) {
         document.getElementById('question-container')
       );
     },
+    editQuestion: function(id) {
+      React.render(
+        React.createElement(QuestionForm, {onQuestionSubmit: this.handleQuestionEditSubmit, question_id: id, question: this.state.data[id.id], isEdit: "true"}),
+        document.getElementById('question-container')
+      );
+    },
     previewQuestion: function() {
       React.render(
         React.createElement("div", null, 
           React.createElement(PageMetas, {data: this.state.meta}), 
-          React.createElement(Questions, {data: this.state.data}), 
+          React.createElement(Questions, {onEditQuestion: this.editQuestion, data: this.state.data}), 
           React.createElement("h4", null, "结果"), 
           React.createElement(ResultOptions, {options: this.state.result})
         ),
