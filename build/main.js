@@ -75,6 +75,11 @@ jQuery(function($) {
         return {options: []};
       }
     },
+    deleteOption: function(index) {
+      var options = this.state.options;
+      options.splice(index,1);
+      this.setState({options: options});
+    },
     handleSubmit: function(e) {
       e.preventDefault();
       var title = React.findDOMNode(this.refs.title).value.trim();
@@ -129,7 +134,7 @@ jQuery(function($) {
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-option"}, "选项"), 
             React.createElement(OptionForm, {onOptionSubmit: this.handleOptionSubmit}), 
-            React.createElement(Options, {options: this.state.options})
+            React.createElement(Options, {options: this.state.options, onDeleteOption: this.deleteOption})
           ), 
           React.createElement("button", {type: "submit", className: "btn btn-primary"}, "保存")
         )
@@ -137,18 +142,28 @@ jQuery(function($) {
     }
   });
   var Options = React.createClass({displayName: "Options",
+    deleteOption: function(e) {
+      var index = e.target.parentNode.getAttribute('data-id');
+      this.props.onDeleteOption(index);
+    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         if($('#f-option-to').prop('disabled')){
           return (
-            React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
-            toLetters(index + 1)+ '.' + option.option
+            React.createElement("div", {"data-id": index}, 
+              React.createElement("p", {className: "col-md-11", "data-title": option.option, "data-id": index, key: index}, 
+              toLetters(index + 1)+ '.' + option.option
+              ), 
+              React.createElement("p", {className: "col-md-1", onClick: this.deleteOption}, React.createElement("a", null, "删除"))
             )
           );
         } else {
           return (
-            React.createElement("p", {"data-title": option.option, "data-id": index, key: index}, 
-            toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
+            React.createElement("div", {"data-id": index}, 
+              React.createElement("p", {className: "col-md-11", "data-title": option.option, "data-id": index, key: index}, 
+              toLetters(index + 1)+ '.' + option.option, " ", React.createElement("span", {className: "right"}, "跳转到问题 ", option.to)
+              ), 
+              React.createElement("p", {className: "col-md-1", onClick: this.deleteOption}, React.createElement("a", null, "删除"))
             )
           );
         }

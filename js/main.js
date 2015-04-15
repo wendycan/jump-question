@@ -75,6 +75,11 @@ jQuery(function($) {
         return {options: []};
       }
     },
+    deleteOption: function(index) {
+      var options = this.state.options;
+      options.splice(index,1);
+      this.setState({options: options});
+    },
     handleSubmit: function(e) {
       e.preventDefault();
       var title = React.findDOMNode(this.refs.title).value.trim();
@@ -129,7 +134,7 @@ jQuery(function($) {
           <div className="form-group">
             <label htmlFor="f-option">选项</label>
             <OptionForm onOptionSubmit={this.handleOptionSubmit}/>
-            <Options options={this.state.options}></Options>
+            <Options options={this.state.options} onDeleteOption={this.deleteOption}></Options>
           </div>
           <button type="submit" className="btn btn-primary">保存</button>
         </form>
@@ -137,19 +142,29 @@ jQuery(function($) {
     }
   });
   var Options = React.createClass({
+    deleteOption: function(e) {
+      var index = e.target.parentNode.getAttribute('data-id');
+      this.props.onDeleteOption(index);
+    },
     render: function() {
       var optionsNodes = this.props.options.map(function(option, index) {
         if($('#f-option-to').prop('disabled')){
           return (
-            <p data-title={option.option} data-id={index} key={index}>
-            {toLetters(index + 1)+ '.' + option.option}
-            </p>
+            <div data-id={index}>
+              <p className='col-md-11' data-title={option.option} data-id={index} key={index}>
+              {toLetters(index + 1)+ '.' + option.option}
+              </p>
+              <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
+            </div>
           );
         } else {
           return (
-            <p data-title={option.option} data-id={index} key={index}>
-            {toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span>
-            </p>
+            <div data-id={index}>
+              <p className='col-md-11' data-title={option.option} data-id={index} key={index}>
+              {toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span>
+              </p>
+              <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
+            </div>
           );
         }
       }.bind(this));//to pass this to function
