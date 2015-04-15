@@ -35,7 +35,7 @@ jQuery(function($) {
       return (
         React.createElement("div", {className: "row"}, 
           React.createElement("div", {className: "col-md-9"}, 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "选项", ref: "option", id: "f-option"})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "选项内容", ref: "option", id: "f-option"})
           ), 
           React.createElement("div", {className: "col-md-2"}, 
             React.createElement("input", {type: "number", min: "1", className: "form-control", placeholder: "跳转到问题序号", ref: "option_to", id: "f-option-to"})
@@ -125,11 +125,11 @@ jQuery(function($) {
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-title"}, "问题"), 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "Title", ref: "title", id: "f-title", defaultValue: this.props.question&&this.props.question.title})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "标题", ref: "title", id: "f-title", defaultValue: this.props.question&&this.props.question.title})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-url"}, "图片地址"), 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "URL", ref: "url", id: "f-url", defaultValue: this.props.question&&this.props.question.image_url})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "图片地址", ref: "url", id: "f-url", defaultValue: this.props.question&&this.props.question.image_url})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-option"}, "选项"), 
@@ -310,11 +310,11 @@ jQuery(function($) {
         React.createElement("form", {className: "PageForm", onSubmit: this.handleSubmit}, 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-p-title"}, "标题"), 
-            React.createElement("input", {type: "text", className: "form-control", placeholder: "Title", ref: "title", id: "f-p-title", defaultValue: this.props.data.title})
+            React.createElement("input", {type: "text", className: "form-control", placeholder: "标题", ref: "title", id: "f-p-title", defaultValue: this.props.data.title})
           ), 
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {htmlFor: "f-p-desc"}, "描述"), 
-            React.createElement("textarea", {className: "form-control", placeholder: "Desc", row: "5", ref: "desc", id: "f-p-desc", defaultValue: this.props.data.desc})
+            React.createElement("textarea", {className: "form-control", placeholder: "描述", row: "5", ref: "desc", id: "f-p-desc", defaultValue: this.props.data.desc})
           ), 
           React.createElement("button", {type: "submit", className: "btn btn-primary"}, "更新")
         )

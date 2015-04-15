@@ -35,7 +35,7 @@ jQuery(function($) {
       return (
         <div className="row">
           <div className="col-md-9">
-            <input type="text" className="form-control" placeholder="选项" ref="option" id="f-option" />
+            <input type="text" className="form-control" placeholder="选项内容" ref="option" id="f-option" />
           </div>
           <div className="col-md-2">
             <input type="number" min='1' className="form-control" placeholder="跳转到问题序号" ref="option_to" id="f-option-to" />
@@ -125,11 +125,11 @@ jQuery(function($) {
           </div>
           <div className="form-group">
             <label htmlFor="f-title">问题</label>
-            <input type="text" className="form-control" placeholder="Title" ref="title" id="f-title" defaultValue={this.props.question&&this.props.question.title} />
+            <input type="text" className="form-control" placeholder="标题" ref="title" id="f-title" defaultValue={this.props.question&&this.props.question.title} />
           </div>
           <div className="form-group">
             <label htmlFor="f-url">图片地址</label>
-            <input type="text" className="form-control" placeholder="URL" ref="url" id="f-url" defaultValue={this.props.question&&this.props.question.image_url} />
+            <input type="text" className="form-control" placeholder="图片地址" ref="url" id="f-url" defaultValue={this.props.question&&this.props.question.image_url} />
           </div>
           <div className="form-group">
             <label htmlFor="f-option">选项</label>
@@ -310,11 +310,11 @@ jQuery(function($) {
         <form className="PageForm" onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label htmlFor="f-p-title">标题</label>
-            <input type="text" className="form-control" placeholder="Title" ref="title" id="f-p-title" defaultValue={this.props.data.title} />
+            <input type="text" className="form-control" placeholder="标题" ref="title" id="f-p-title" defaultValue={this.props.data.title} />
           </div>
           <div className="form-group">
             <label htmlFor="f-p-desc">描述</label>
-            <textarea className="form-control" placeholder="Desc" row="5" ref="desc" id="f-p-desc" defaultValue={this.props.data.desc}/>
+            <textarea className="form-control" placeholder="描述" row="5" ref="desc" id="f-p-desc" defaultValue={this.props.data.desc}/>
           </div>
           <button type="submit" className="btn btn-primary">更新</button>
         </form>
