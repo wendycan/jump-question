@@ -67,6 +67,29 @@ var MakerApp = React.createClass({
     $('.question-box .top-buttons .col-md-2:nth-child(4) .btn').addClass('active');
   },
 
+  fetchCode: function (callback) {
+    var jsCode = '';
+    var cssCode = '';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', './public/result.js');
+    xhr.onreadystatechange = function (e) {
+      if(xhr.readyState == 4) {
+        window.xx = xhr;
+        jsCode = xhr.responseText;
+        xhr_css.send();
+      }
+    };
+    xhr.send();
+    var xhr_css = new XMLHttpRequest();
+    xhr_css.open('GET', './build/result.css');
+    xhr_css.onreadystatechange = function () {
+      if (xhr_css.readyState == 4) {
+        cssCode = xhr_css.responseText;
+        callback(jsCode, cssCode);
+      }
+    }
+  },
+
   generateHTML: function() {
     $('#question-container').empty();
     React.render(
@@ -75,10 +98,13 @@ var MakerApp = React.createClass({
     )
     var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
     text += React.renderToStaticMarkup(<Result data={this.state.questions} meta={this.state.meta} result={this.state.result} />);
-    text += '<link rel="stylesheet" type="text/css" href="' + cssUrl + '">';
-    text += '<script type="text/javascript" src="' + jsUrl + '"></script></body></html>';
-    $('#result-text textarea').val(text);
+    this.fetchCode(function (jsCode, cssCode) {
+      text += '<style>' + cssCode + '</style>';
+      text += '<script>' + jsCode + '</script></body></html>';
+      $('#result-text textarea').val(text);
+    });
   },
+
   render: function() {
     window.state = this.state;
     return (<div className="question-box">
