@@ -1,4 +1,5 @@
 var React = require('react');
+var Question = require('./question');
 
 var Questions = React.createClass({
   editQuestion: function(id) {

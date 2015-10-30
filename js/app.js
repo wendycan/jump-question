@@ -8,19 +8,21 @@ var Questions = require('./questions');
 var ResultOptions = require('./resultOptions');
 var ResultForm = require('./resultForm');
 var Result = require('./result');
+var data = require('../public/data');
 
 var cssUrl = 'http://localhost:8000/build/result.css';
 var jsUrl = 'http://localhost:8000/public/result.js';
 
 var MakerApp = React.createClass({
   getInitialState: function() {
-    return {data: [], meta: {}, result: []};
+    return data;
+    // return {data: [], meta: {}, result: []};
   },
 
   handleQuestionSubmit: function(question) {
-    var questions = this.state.data;
+    var questions = this.state.questions;
     questions.push(question);
-    this.setState({data: questions}, this.previewQuestion);
+    this.setState({questions: questions}, this.previewQuestion);
   },
 
   handlePageSubmit: function(meta) {
@@ -32,9 +34,9 @@ var MakerApp = React.createClass({
   },
 
   handleQuestionEditSubmit: function(question, id) {
-    var questions = this.state.data;
+    var questions = this.state.questions;
     questions[id] = question;
-    this.setState({data: questions}, this.previewQuestion);
+    this.setState({questions: questions}, this.previewQuestion);
   },
 
   newQuestion: function(){
@@ -60,7 +62,7 @@ var MakerApp = React.createClass({
 
   editQuestion: function(id) {
     React.render(
-      <QuestionForm onQuestionSubmit={this.handleQuestionEditSubmit} question_id={id} question={this.state.data[id.id]} isEdit='true' />,
+      <QuestionForm onQuestionSubmit={this.handleQuestionEditSubmit} question_id={id} question={this.state.questions[id.id]} isEdit='true' />,
       document.getElementById('question-container')
     );
   },
@@ -69,7 +71,7 @@ var MakerApp = React.createClass({
     React.render(
       <div>
         <PageMetas data={this.state.meta} />
-        <Questions onEditQuestion={this.editQuestion} data={this.state.data} />
+        <Questions onEditQuestion={this.editQuestion} data={this.state.questions} />
         <h4>结果</h4>
         <ResultOptions options={this.state.result} />
       </div>,
@@ -86,12 +88,13 @@ var MakerApp = React.createClass({
       document.getElementById('question-container')
     )
     var text = '<html><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"></head><body>';
-    text += React.renderToStaticMarkup(<Result data={this.state.data} meta={this.state.meta} result={this.state.result} />);
+    text += React.renderToStaticMarkup(<Result data={this.state.questions} meta={this.state.meta} result={this.state.result} />);
     text += '<link rel="stylesheet" type="text/css" href="' + cssUrl + '">';
     text += '<script type="text/javascript" src="' + jsUrl + '"></script></body></html>';
     $('#result-text textarea').val(text);
   },
   render: function() {
+    window.state = this.state;
     return (<div className="question-box">
       <div className="row top-buttons">
         <div className="col-md-2 col-xs-6">

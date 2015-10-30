@@ -1,4 +1,5 @@
 var React = require('react');
+var OptionsList = require('./optionsList');
 
 var Question = React.createClass({
   edit: function() {
