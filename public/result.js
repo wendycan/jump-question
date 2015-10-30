@@ -18,12 +18,13 @@ window.addEventListener('DOMContentLoaded', function(){
         var target_li = e.currentTarget.parentNode;
         var this_question = target_li.parentNode.parentNode;
         var isLast = this_question.getAttribute('data-islast');
-        if(isLast == 'true'){
+        var isToEnd = target_li.getAttribute('data-istoend');
+        if(isLast == 'true' || isToEnd){
           $.toArray(target_li.parentNode.querySelectorAll('input')).forEach(function(el) {
             el.disabled = "disabled";
           });
           target_li.className += ' active';
-          var target_id = target_li.getAttribute('data-option-index');
+          var target_id = target_li.getAttribute('data-to');
           document.querySelector("[data-result-index='"+target_id+"']").style.display = 'block';
           document.querySelector('.bm_results').style.display = 'block';
         } else {

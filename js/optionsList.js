@@ -16,7 +16,6 @@ var OptionsList = React.createClass({
     }.bind(this));
     return (
       <div className="optionsList row">
-        <hr />
         {optionsNodes}
       </div>
     )

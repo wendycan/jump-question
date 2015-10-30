@@ -6,7 +6,7 @@ var Result = React.createClass({
       var _index = index;
       var optionsNodes = question.options.map(function(option, index) {
         return (
-          <li key={index} style={{listStyle: 'none'}} data-to={option.to} data-option-index={index+1}>
+          <li key={index} data-istoend={option.toEnd} style={{listStyle: 'none'}} data-to={option.to} >
           <input type="radio" name={_index} value={index} id={"f-option-" + _index + '-' + index}/>
           <label htmlFor={"f-option-" + _index + '-' + index}>{option.title}</label>
           </li>
@@ -23,7 +23,7 @@ var Result = React.createClass({
     });
     var resultNodes = this.props.result.map(function(r,index) {
       return (
-        <li data-result-index={index+1} style={{listStyle: 'none',display: 'none'}}>
+        <li data-result-index={r.id} style={{listStyle: 'none', display: 'none'}}>
           <p>{r.desc}</p>
         </li>
       );
@@ -31,8 +31,6 @@ var Result = React.createClass({
 
     return (
       <div className="bm_page">
-        <h3>{this.props.meta.title}</h3>
-        <p>{this.props.meta.desc}</p>
         <ul className="bm_questionList">
           {questionNodes}
         </ul>

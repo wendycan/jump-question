@@ -2,8 +2,6 @@ var React = require('react');
 var $ = require('jquery');
 
 var QuestionForm = require('./questionForm');
-var PageForm = require('./pageForm');
-var PageMetas = require('./pageMetas');
 var Questions = require('./questions');
 var ResultOptions = require('./resultOptions');
 var ResultForm = require('./resultForm');
@@ -25,10 +23,6 @@ var MakerApp = React.createClass({
     this.setState({questions: questions}, this.previewQuestion);
   },
 
-  handlePageSubmit: function(meta) {
-    this.setState({meta: meta}, this.previewQuestion)
-  },
-
   handleResultSubmit: function(result) {
     this.setState({result: result}, this.previewQuestion);
   },
@@ -42,13 +36,6 @@ var MakerApp = React.createClass({
   newQuestion: function(){
     React.render(
       <QuestionForm onQuestionSubmit={this.handleQuestionSubmit}/>,
-      document.getElementById('question-container')
-    );
-  },
-
-  editPage: function() {
-    React.render(
-      <PageForm onPageSubmit={this.handlePageSubmit} data={this.state.meta}/>,
       document.getElementById('question-container')
     );
   },
@@ -70,7 +57,6 @@ var MakerApp = React.createClass({
   previewQuestion: function() {
     React.render(
       <div>
-        <PageMetas data={this.state.meta} />
         <Questions onEditQuestion={this.editQuestion} data={this.state.questions} />
         <h4>结果</h4>
         <ResultOptions options={this.state.result} />
@@ -97,9 +83,6 @@ var MakerApp = React.createClass({
     window.state = this.state;
     return (<div className="question-box">
       <div className="row top-buttons">
-        <div className="col-md-2 col-xs-6">
-          <div className="btn btn-default" onClick={this.editPage}>页面信息</div>
-        </div>
         <div className="col-md-2 col-xs-6">
           <div className="btn btn-default" onClick={this.editResult}>编辑结果</div>
         </div>
