@@ -1,37 +1,47 @@
-window.addEventListener('DOMContentLoaded', function(){
+var React = require('react');
 
-  var $ = function(selector, context){
-    return (context || document).querySelector(selector)
-  }
-  var $$ = function(selector, context){
-    return (context || document).querySelectorAll(selector)
-  }
-  $.toArray = function(list){
-    return Array.prototype.slice.call(list)
-  }
-
-  var inputs = $$('.bm_optionList input');
-  var resultDiv = $('.bm_result');
-
-  $.toArray(inputs).forEach(function(input){
-      input.addEventListener('click', function(e){
-        var target_li = e.currentTarget.parentNode;
-        var this_question = target_li.parentNode.parentNode;
-        var isLast = this_question.getAttribute('data-islast');
-        if(isLast == 'true'){
-          $.toArray(target_li.parentNode.querySelectorAll('input')).forEach(function(el) {
-            el.disabled = "disabled";
-          });
-          target_li.className += ' active';
-          var target_id = target_li.getAttribute('data-option-index');
-          document.querySelector("[data-result-index='"+target_id+"']").style.display = 'block';
-          document.querySelector('.bm_results').style.display = 'block';
-        } else {
-          var to = target_li.getAttribute('data-to');
-          var next_question = document.querySelector("[data-question-id='"+to+"']");
-          this_question.style.display = 'none';
-          next_question.style.display = 'block';          
-        }
+var Result = React.createClass({
+  render: function() {
+    var questionNodes = this.props.data.map(function(question, index) {
+      var _index = index;
+      var optionsNodes = question.options.map(function(option, index) {
+        return (
+          <li key={index} style={{listStyle: 'none'}} data-to={option.to} data-option-index={index+1}>
+          <input type="radio" name={_index} value={index} id={"f-option-" + _index + '-' + index}/>
+          <label htmlFor={"f-option-" + _index + '-' + index}>{option.option}</label>
+          </li>
+        );
+      });
+      var display = index == 0? 'block':'none';
+      return (
+        <li key={index} className="bm_question" data-islast={question.isLast} data-question-id={index+1} style={{listStyle: 'none', display: display}}>
+          <h4>{ index + 1 + '.  ' + question.title }</h4>
+          <img src={question.image_url} />
+          <ul className="bm_optionList">{optionsNodes}</ul>
+        </li>
+      );
     });
-  });
-}, false)
+    var resultNodes = this.props.result.map(function(r,index) {
+      return (
+        <li data-result-index={index+1} style={{listStyle: 'none',display: 'none'}}>
+          <p>{r.desc}</p>
+        </li>
+      );
+    });
+
+    return (
+      <div className="bm_page">
+        <h3>{this.props.meta.title}</h3>
+        <p>{this.props.meta.desc}</p>
+        <ul className="bm_questionList">
+          {questionNodes}
+        </ul>
+        <ul className="bm_results" style={{display: 'none'}}>
+          {resultNodes}
+        </ul>
+      </div>
+    );
+  }
+});
+
+module.exports = Result;

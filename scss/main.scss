@@ -1,0 +1,59 @@
+.right {
+  float: right;
+}
+
+.question-box .btn {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+#create-option {
+  margin-top: 0;
+}
+
+#content {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.top-buttons .btn {
+  width: 100%;
+}
+
+.top-buttons {
+  margin-bottom: 20px;
+}
+
+.optionsList {
+  margin-top: 10px;
+}
+
+.optionsList p {
+  margin: 0;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.active {
+  background-color: #e6ffd6;
+}
+
+.question {
+  border-bottom: solid 1px #aaa;
+}
+
+.question img {
+  max-width: 350px;
+}
+
+.question:last-child {
+  border: none;
+}
+
+#result-text {
+  margin-top: 30px;
+}
+
+.questionForm mark {
+  margin-left: 10px;
+}

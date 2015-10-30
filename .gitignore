@@ -1,2 +1,3 @@
 /bower_components
-/build/.module-cache
+/build
+/node_modules

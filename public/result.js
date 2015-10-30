@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', function(){
           var to = target_li.getAttribute('data-to');
           var next_question = document.querySelector("[data-question-id='"+to+"']");
           this_question.style.display = 'none';
-          next_question.style.display = 'block';          
+          next_question.style.display = 'block';
         }
     });
   });
