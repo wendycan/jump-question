@@ -121,6 +121,9 @@ var MakerApp = React.createClass({
         <div className="col-md-2 col-xs-6">
           <div className="btn btn-default" onClick={this.generateHTML}>生成 HTML</div>
         </div>
+        <div className="col-md-2 col-xs-6">
+          <a className="btn btn-default" href="../example.html" target="_blank">示例</a>
+        </div>
       </div>
       <div id="question-container"></div>
     </div>
