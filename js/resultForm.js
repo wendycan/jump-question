@@ -23,7 +23,7 @@ var ResultForm = React.createClass({
   render: function() {
     return (
       <form className="ResultForm" onSubmit={this.handleSubmit}>
-        <div className="form-group">
+        <div className="form-group clearfix">
           <ResultOptionForm onResultOptionSubmit={this.handleResultOptionSubmit}/>
           <ResultOptions options={this.state.options} onDeleteOption={this.deleteOption} isEdit='true'/>
         </div>

@@ -13,16 +13,16 @@ var ResultOptions = React.createClass({
       if(this.props.isEdit == 'true') {
         return (
           <div data-id={index} key={index}>
-            <p data-title={option.option} data-id={index} className='col-md-11'>
-            {Utils.toLetters(index + 1) + ': ' + option.desc}
+            <p data-title={option.title} data-id={index} className='col-md-11'>
+            {option.id + ': ' + option.desc}
             </p>
             <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
           </div>
         );
       } else {
         return (
-          <p data-title={option.option} data-id={index} key={index}>
-          {Utils.toLetters(index + 1) + ': ' + option.desc}
+          <p data-title={option.title} data-id={index} key={index}>
+          {option.id + ': ' + option.desc}
           </p>
         );
       }

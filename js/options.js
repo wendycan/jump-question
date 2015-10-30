@@ -13,8 +13,8 @@ var Options = React.createClass({
       if($('#f-option-to').prop('disabled')){
         return (
           <div data-id={index}>
-            <p className='col-md-11' data-title={option.option} data-id={index} key={index}>
-            {Utils.toLetters(index + 1)+ '.' + option.option}
+            <p className='col-md-11' data-title={option.title} data-id={index} key={index}>
+            {Utils.toLetters(index + 1)+ '.' + option.title}
             </p>
             <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
           </div>
@@ -22,8 +22,8 @@ var Options = React.createClass({
       } else {
         return (
           <div data-id={index}>
-            <p className='col-md-11' data-title={option.option} data-id={index} key={index}>
-            {Utils.toLetters(index + 1)+ '.' + option.option} <span className='right'>跳转到问题 {option.to}</span>
+            <p className='col-md-11' data-title={option.title} data-id={index} key={index}>
+            {Utils.toLetters(index + 1)+ '.' + option.title} <span className='right'>跳转到问题 {option.to}</span>
             </p>
             <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
           </div>

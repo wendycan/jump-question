@@ -8,7 +8,7 @@ var Result = React.createClass({
         return (
           <li key={index} style={{listStyle: 'none'}} data-to={option.to} data-option-index={index+1}>
           <input type="radio" name={_index} value={index} id={"f-option-" + _index + '-' + index}/>
-          <label htmlFor={"f-option-" + _index + '-' + index}>{option.option}</label>
+          <label htmlFor={"f-option-" + _index + '-' + index}>{option.title}</label>
           </li>
         );
       });
