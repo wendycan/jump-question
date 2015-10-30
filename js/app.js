@@ -8,13 +8,10 @@ var ResultForm = require('./resultForm');
 var Result = require('./result');
 var data = require('../public/data');
 
-var cssUrl = 'http://localhost:8000/build/result.css';
-var jsUrl = 'http://localhost:8000/public/result.js';
-
 var MakerApp = React.createClass({
   getInitialState: function() {
-    return data;
-    // return {data: [], meta: {}, result: []};
+    // return data;
+    return {data: [], meta: {}, result: []};
   },
 
   handleQuestionSubmit: function(question) {
@@ -74,7 +71,6 @@ var MakerApp = React.createClass({
     xhr.open('GET', './public/result.js');
     xhr.onreadystatechange = function (e) {
       if(xhr.readyState == 4) {
-        window.xx = xhr;
         jsCode = xhr.responseText;
         xhr_css.send();
       }
@@ -110,7 +106,7 @@ var MakerApp = React.createClass({
     return (<div className="question-box">
       <div className="row top-buttons">
         <div className="col-md-2 col-xs-6">
-          <div className="btn btn-default" onClick={this.editResult}>编辑结果</div>
+          <div className="btn btn-default" id="edit-result" onClick={this.editResult}>编辑结果</div>
         </div>
         <div className="col-md-2 col-xs-6">
           <div className="btn btn-default" onClick={this.newQuestion}>添加问题</div>

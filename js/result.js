@@ -23,7 +23,7 @@ var Result = React.createClass({
     });
     var resultNodes = this.props.result.map(function(r,index) {
       return (
-        <li data-result-index={r.id} style={{listStyle: 'none', display: 'none'}}>
+        <li key={index} data-result-index={r.id} style={{listStyle: 'none', display: 'none'}}>
           <p>{r.desc}</p>
         </li>
       );

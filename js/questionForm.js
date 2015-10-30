@@ -37,12 +37,15 @@ var QuestionForm = React.createClass({
     options.push(option);
     this.setState({options: options});
   },
+
   lastStatuschange: function() {
     if ($("input[type='checkbox']").is(":checked")) {
       $('#f-option-to').prop('disabled', true);
+      $('#f-end-to').prop('disabled', true);
       $('.optionsList .right').css('display','none');
     } else {
       $('#f-option-to').prop('disabled', false);
+      $('#f-end-to').prop('disabled', false);
     }
   },
   componentDidMount: function() {
@@ -57,7 +60,7 @@ var QuestionForm = React.createClass({
       <form className="questionForm" onSubmit={this.handleSubmit}>
         <div className="form-group">
           <input id="f-last" ref="last" type="checkbox" onChange={this.lastStatuschange} />
-          <label htmlFor="f-last">&nbsp;是最后一个问题</label>
+          <label htmlFor="f-last">&nbsp;是否为最后一个问题</label>
         </div>
         <div className="form-group">
           <label htmlFor="f-title">问题</label>
