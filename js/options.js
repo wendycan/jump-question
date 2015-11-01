@@ -12,7 +12,7 @@ var Options = React.createClass({
     var optionsNodes = this.props.options.map(function(option, index) {
       if($('#f-option-to').prop('disabled')){
         return (
-          <div data-id={index}>
+          <div data-id={index} key={index}>
             <p className='col-md-11' data-title={option.title} data-id={index} key={index}>
             {Utils.toLetters(index + 1)+ '.' + option.title}
             </p>
@@ -21,7 +21,7 @@ var Options = React.createClass({
         );
       } else {
         return (
-          <div data-id={index}>
+          <div data-id={index} key={index}>
             <p className='col-md-11' data-title={option.title} data-id={index} key={index}>
             {Utils.toLetters(index + 1)+ '.' + option.title} <span className='right'>跳转到问题 {option.to}</span>
             </p>

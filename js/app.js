@@ -11,7 +11,7 @@ var data = require('../public/data');
 var MakerApp = React.createClass({
   getInitialState: function() {
     // return data;
-    return {data: [], meta: {}, result: []};
+    return {questions: [], meta: {}, result: []};
   },
 
   handleQuestionSubmit: function(question) {

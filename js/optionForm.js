@@ -5,7 +5,7 @@ var OptionForm = React.createClass({
   handleOptionSubmit: function() {
     var title = React.findDOMNode(this.refs.title).value.trim();
     var to = React.findDOMNode(this.refs.option_to).value.trim();
-    if (!title || ((!to || to <= 0) && (!$("#f-last").is(":checked") || !$('#f-end-to').is(':checked')))) return
+    if (!title || ((!to) && (!$("#f-last").is(":checked") || $('#f-end-to').is(':checked')))) return
     this.props.onOptionSubmit({title: title, to: to, toEnd: $('#f-end-to').is(':checked')});
     React.findDOMNode(this.refs.title).value = '';
     React.findDOMNode(this.refs.option_to).value = '';
