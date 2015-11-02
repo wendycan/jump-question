@@ -14,7 +14,7 @@ var Result = React.createClass({
       });
       var display = index == 0? 'block':'none';
       return (
-        <li key={index} className="bm_question" data-islast={question.isLast} data-question-id={index+1} style={{listStyle: 'none', display: display}}>
+        <li key={index} className="bm_question" data-islast={question.isLast} data-result-id={question.id} style={{listStyle: 'none', display: display}}>
           <h4>{ index + 1 + '.  ' + question.title }</h4>
           <img src={question.image_url} />
           <ul className="bm_optionList">{optionsNodes}</ul>
@@ -23,7 +23,7 @@ var Result = React.createClass({
     });
     var resultNodes = this.props.result.map(function(r,index) {
       return (
-        <li key={index} data-result-index={r.id} style={{listStyle: 'none', display: 'none'}}>
+        <li key={index} data-result-id={r.id} style={{listStyle: 'none', display: 'none'}}>
           <p>{r.desc}</p>
         </li>
       );
