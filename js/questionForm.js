@@ -59,10 +59,6 @@ var QuestionForm = React.createClass({
     return (
       <form className="questionForm" onSubmit={this.handleSubmit}>
         <div className="form-group">
-          <input id="f-last" ref="last" type="checkbox" onChange={this.lastStatuschange} />
-          <label htmlFor="f-last">&nbsp;是否为最后一个问题</label>
-        </div>
-        <div className="form-group">
           <label htmlFor="f-title">问题</label>
           <input type="text" className="form-control" placeholder="标题" ref="title" id="f-title" defaultValue={this.props.question&&this.props.question.title} />
         </div>

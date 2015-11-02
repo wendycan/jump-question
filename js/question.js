@@ -8,7 +8,7 @@ var Question = React.createClass({
   render: function() {
     return (
       <div className="question">
-        <h4>问题{this.props.index}：{this.props.title}<a onClick={this.edit} className='right'>编辑</a></h4>
+        <h4>问题{this.props.id}：{this.props.title}<a onClick={this.edit} className='right'>编辑</a></h4>
         <img src={this.props.image_url}/>
         <OptionsList options={this.props.options} isLast={this.props.isLast}></OptionsList>
       </div>

@@ -8,7 +8,7 @@ var Questions = React.createClass({
   render: function() {
     var questionNodes = this.props.data.map(function(question, index) {
       return (
-        <Question onEditQuestion={this.editQuestion} title={question.title} isLast={question.isLast} image_url={question.image_url} options={question.options} index={index + 1} key={index}>
+        <Question onEditQuestion={this.editQuestion} id={question.id} title={question.title} isLast={question.isLast} image_url={question.image_url} options={question.options} index={index + 1} key={index}>
         </Question>
       );
     }.bind(this));
