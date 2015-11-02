@@ -15,8 +15,7 @@ var ResultForm = React.createClass({
     options.splice(index,1);
     this.setState({options: options});
   },
-  handleSubmit: function(e) {
-    e.preventDefault();
+  handleSubmit: function() {
     this.props.onResultSubmit({result: this.state.options, count:this.count});
   },
   handleResultOptionSubmit: function(option) {
@@ -25,14 +24,17 @@ var ResultForm = React.createClass({
     options.push(option);
     this.setState({options: options});
   },
+  handleSubmitForm: function (e) {
+    e.preventDefault();
+  },
   render: function() {
     return (
-      <form className="ResultForm" onSubmit={this.handleSubmit}>
+      <form className="ResultForm" onSubmit={this.handleSubmitForm}>
         <div className="form-group clearfix">
           <ResultOptionForm onResultOptionSubmit={this.handleResultOptionSubmit}/>
           <ResultOptions options={this.state.options} onDeleteOption={this.deleteOption} isEdit='true'/>
         </div>
-        <button type="submit" className="btn btn-primary">更新</button>
+        <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>更新</button>
       </form>
     )
   }
