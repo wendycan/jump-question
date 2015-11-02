@@ -20,15 +20,14 @@ var QuestionForm = React.createClass({
     e.preventDefault();
     var title = React.findDOMNode(this.refs.title).value.trim();
     var url = React.findDOMNode(this.refs.url).value.trim();
-    var isLast = $('#f-option-to').prop('disabled');
     if (!title || this.state.options.length < 1) {
       return;
     }
 
     if(this.props.isEdit){
-      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast},this.props.question_id.id);
+      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url},this.props.question_id.id);
     } else {
-      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url, isLast: isLast});
+      this.props.onQuestionSubmit({title: title, options: this.state.options, image_url: url});
     }
     $('#question-container').empty();
   },
@@ -46,13 +45,6 @@ var QuestionForm = React.createClass({
     } else {
       $('#f-option-to').prop('disabled', false);
       $('#f-end-to').prop('disabled', false);
-    }
-  },
-  componentDidMount: function() {
-    if(this.props.question && this.props.question.isLast) {
-      $("#f-last").prop('checked', true);
-    } else {
-      $("#f-last").prop('checked', false);
     }
   },
   render: function() {

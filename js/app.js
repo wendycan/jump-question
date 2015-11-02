@@ -13,8 +13,8 @@ var MakerApp = React.createClass({
   q_count: 1,
 
   getInitialState: function() {
-    // return data;
-    return {questions: [], meta: {}, result: []};
+    return data;
+    // return {questions: [], meta: {}, result: []};
   },
 
   handleQuestionSubmit: function(question) {
@@ -50,16 +50,32 @@ var MakerApp = React.createClass({
   },
 
   editQuestion: function(id) {
+    var question = {};
+    this.state.questions.forEach(function (quest) {
+      if (quest.id === id) {
+        question = quest;
+      }
+    })
     React.render(
-      <QuestionForm onQuestionSubmit={this.handleQuestionEditSubmit} question_id={id} question={this.state.questions[id.id]} isEdit='true' />,
+      <QuestionForm onQuestionSubmit={this.handleQuestionEditSubmit} question_id={id} question={question} isEdit='true' />,
       document.getElementById('question-container')
     );
+  },
+
+  deleteQuestion: function (id) {
+    var questions = this.state.questions;
+    for (var i = questions.length - 1; i >= 0; i--) {
+      if (questions[i].id === id) {
+        questions.splice(i, 1);
+      }
+    };
+    this.setState({questions: questions}, this.previewQuestion);
   },
 
   previewQuestion: function() {
     React.render(
       <div>
-        <Questions onEditQuestion={this.editQuestion} data={this.state.questions} />
+        <Questions onEditQuestion={this.editQuestion} data={this.state.questions} onDeleteQuestion={this.deleteQuestion}/>
         <h4>结果</h4>
         <ResultOptions options={this.state.result} />
       </div>,
