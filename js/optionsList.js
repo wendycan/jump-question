@@ -9,7 +9,7 @@ var OptionsList = React.createClass({
       );
     }.bind(this));
     return (
-      <div className="optionsList row">
+      <div className="optionsList no-border">
         {optionsNodes}
       </div>
     )

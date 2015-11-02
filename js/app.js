@@ -75,8 +75,9 @@ var MakerApp = React.createClass({
   previewQuestion: function() {
     React.render(
       <div>
+        <h3>问题</h3>
         <Questions onEditQuestion={this.editQuestion} data={this.state.questions} onDeleteQuestion={this.deleteQuestion}/>
-        <h4>结果</h4>
+        <h3>结果</h3>
         <ResultOptions options={this.state.result} />
       </div>,
       document.getElementById('question-container')

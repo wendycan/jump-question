@@ -7,6 +7,16 @@
   margin-right: 10px;
 }
 
+.question-box h3 {
+  border-top: solid 2px #aaa;
+  padding-top: 5px;
+  margin-top: 50px;
+  &:first-child {
+    border: none;
+    margin-top: 20px;
+  }
+}
+
 #create-option {
   margin-top: 0;
 }
@@ -26,6 +36,13 @@
 
 .optionsList {
   margin-top: 10px;
+  border: solid 1px #ddd;
+  &.no-border{
+    border: none;
+  }
+  .btn-danger {
+    margin: 0;
+  }
 }
 
 .optionsList p {
@@ -34,20 +51,30 @@
   padding-bottom: 6px;
 }
 
+.brand-text {
+  font-size: 18px;
+  background-color: #DBA800;
+  color: #fff;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: inline-block;
+  text-align: center;
+  line-height: 35px;
+  margin-right: 8px;
+}
+
 .active {
   background-color: #e6ffd6;
 }
 
 .question {
-  border-bottom: solid 1px #aaa;
+  border: solid 1px #d5d5d5;
+  padding: 10px
 }
 
 .question img {
   max-width: 350px;
-}
-
-.question:last-child {
-  border: none;
 }
 
 #result-text {
@@ -56,6 +83,14 @@
 
 .questionForm mark {
   margin-left: 10px;
+}
+
+.resultsList {
+  border: solid 1px #d5d5d5;
+  padding: 10px;
+  p {
+    font-size: 16px;
+  }
 }
 
 .questionForm {
@@ -67,5 +102,11 @@
       width: 130px;
       margin-left: 15px
     }
+  }
+}
+
+.resultForm {
+  .row {
+    margin-bottom: 10px;
   }
 }

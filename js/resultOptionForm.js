@@ -16,7 +16,7 @@ var ResultOptionForm = React.createClass({
           <input type="text" className="form-control" placeholder="内容" ref="r_option_desc" id="r-option-desc" />
         </div>
         <div className="col-md-2">
-          <div className="btn btn-info" id="create-option" onClick={this.handleOptionSubmit}>添加</div>
+          <div className="btn btn-info right" id="create-option" onClick={this.handleOptionSubmit}>添加</div>
         </div>
       </div>
     );

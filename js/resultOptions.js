@@ -14,21 +14,21 @@ var ResultOptions = React.createClass({
         return (
           <div data-id={index} key={index}>
             <p data-title={option.title} data-id={index} className='col-md-11'>
-            {option.id + ': ' + option.desc}
+            <span className='brand-text'>{option.id}</span>{option.desc}
             </p>
-            <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
+            <p className='col-md-1' onClick={this.deleteOption}><a className="btn btn-xs btn-danger">删除</a></p>
           </div>
         );
       } else {
         return (
           <p data-title={option.title} data-id={index} key={index}>
-          {option.id + ': ' + option.desc}
+          <span className='brand-text'>{option.id}</span>{option.desc}
           </p>
         );
       }
     }.bind(this));//to pass this to function
     return (
-      <div className="optionsList">
+      <div className="resultsList container">
         {optionsNodes}
       </div>
     )

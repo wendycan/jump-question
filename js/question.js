@@ -14,9 +14,9 @@ var Question = React.createClass({
     return (
       <div className="question">
         <h4>
-          问题{this.props.id}：{this.props.title}
-          <a onClick={this.deleteQuestion} className='right'>删除</a>
-          <a onClick={this.edit} className='right'>编辑</a>
+          <span className="brand-text">{this.props.id}</span>{this.props.title}
+          <a onClick={this.deleteQuestion} className='right btn btn-xs btn-danger'>删除</a>
+          <a onClick={this.edit} className='right btn btn-xs btn-info'>编辑</a>
         </h4>
         <img src={this.props.image_url}/>
         <OptionsList options={this.props.options}></OptionsList>
