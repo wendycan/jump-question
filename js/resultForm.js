@@ -19,7 +19,7 @@ var ResultForm = React.createClass({
     this.props.onResultSubmit({result: this.state.options, count:this.count});
   },
   handleResultOptionSubmit: function(option) {
-    option.id = this.count++;
+    option.id = 'r' + this.count++;
     var options = this.state.options;
     options.push(option);
     this.setState({options: options});

@@ -9,7 +9,8 @@ var Result = require('./result');
 var data = require('../public/data');
 
 var MakerApp = React.createClass({
-  count: 0,
+  r_count: 0,
+  q_count: 1,
 
   getInitialState: function() {
     // return data;
@@ -18,13 +19,13 @@ var MakerApp = React.createClass({
 
   handleQuestionSubmit: function(question) {
     var questions = this.state.questions;
-    question.id = this.count++;
+    question.id = this.q_count++;
     questions.push(question);
     this.setState({questions: questions}, this.previewQuestion);
   },
 
   handleResultSubmit: function(data) {
-    this.count = data.count;
+    this.r_count = data.count;
     this.setState({result: data.result}, this.previewQuestion);
   },
 
@@ -43,7 +44,7 @@ var MakerApp = React.createClass({
 
   editResult: function() {
     React.render(
-      <ResultForm onResultSubmit={this.handleResultSubmit} data={this.state.result} count={this.count}/>,
+      <ResultForm onResultSubmit={this.handleResultSubmit} data={this.state.result} count={this.r_count}/>,
       document.getElementById('question-container')
     );
   },
