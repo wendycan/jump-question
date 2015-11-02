@@ -23,7 +23,7 @@ var Options = React.createClass({
         return (
           <div data-id={index} key={index}>
             <p className='col-md-11' data-title={option.title} data-id={index} key={index}>
-            {Utils.toLetters(index + 1)+ '.' + option.title} <span className='right'>跳转到问题 {option.to}</span>
+            {Utils.toLetters(index + 1)+ '.' + option.title} <span className='right'>{option.toEnd ? '跳转到结果' : '跳转到问题'} {option.to}</span>
             </p>
             <p className='col-md-1' onClick={this.deleteOption}><a>删除</a></p>
           </div>
