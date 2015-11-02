@@ -13,8 +13,8 @@ var MakerApp = React.createClass({
   q_count: 1,
 
   getInitialState: function() {
-    return data;
-    // return {questions: [], meta: {}, result: []};
+    // return data;
+    return {questions: [], meta: {}, result: []};
   },
 
   handleQuestionSubmit: function(question) {

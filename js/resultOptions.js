@@ -16,7 +16,7 @@ var ResultOptions = React.createClass({
             <p data-title={option.title} data-id={index} className='col-md-11'>
             <span className='brand-text'>{option.id}</span>{option.desc}
             </p>
-            <p className='col-md-1' onClick={this.deleteOption}><a className="btn btn-xs btn-danger">删除</a></p>
+            <p className='col-md-1' onClick={this.deleteOption}><a className="btn btn-xs btn-danger right">删除</a></p>
           </div>
         );
       } else {

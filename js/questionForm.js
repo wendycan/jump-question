@@ -63,7 +63,7 @@ var QuestionForm = React.createClass({
           <OptionForm onOptionSubmit={this.handleOptionSubmit}/>
           <Options options={this.state.options} onDeleteOption={this.deleteOption}></Options>
         </div>
-        <button type="submit" className="btn btn-primary">保存</button>
+        <button type="submit" className="btn btn-primary">添加</button>
       </form>
     );
   }

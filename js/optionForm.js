@@ -25,7 +25,7 @@ var OptionForm = React.createClass({
           <input className="form-control" placeholder="问题或结果序号" ref="option_to" id="f-option-to" />
         </div>
         <div className="col-md-1">
-          <div className="btn btn-info" id="create-option" onClick={this.handleOptionSubmit}>添加</div>
+          <div className="btn btn-info" id="create-option" onClick={this.handleOptionSubmit}>添加选项</div>
         </div>
       </div>
     );
