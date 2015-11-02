@@ -1,7 +1,7 @@
 module.exports = {
   "questions": [{
     "title": "家庭可支配净资产（自住房除外）是否在居住地月平均工资1000倍以上？（南京2014年月平均薪酬为5592元）",
-    "id": "q1",
+    "id": "1",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -14,7 +14,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻收入之和是否在居住地月平均工资的12倍以上且没有房贷？",
-    "id": "q2",
+    "id": "2",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -27,7 +27,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "丈夫（或妻子）一方收入是否超过居住地月平均工资10倍以上且没有房贷？",
-    "id": "q3",
+    "id": "3",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -40,7 +40,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻双方或一方的父母是否拥有居住地月平均工资1000倍以上的可支配净资产（自住房除外）？",
-    "id": "q4",
+    "id": "4",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -53,7 +53,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "目前是否在居住地拥有产权房且房屋居住面积为100平米以上的三居室？",
-    "id": "q5",
+    "id": "5",
     "options": [{
       "title": "是",
       "to": "6"
@@ -65,7 +65,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻月收入之和是否在居住地月平均工资的10倍以上且房贷余额在50万元以内？",
-    "id": "q6",
+    "id": "6",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -78,7 +78,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻月收入之和是否在居住地月平均工资的8倍以上且有经济实力在居住地换置三房？",
-    "id": "q7",
+    "id": "7",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -91,7 +91,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "第一胎是否为女孩且已大于5岁？",
-    "id": "q8",
+    "id": "8",
     "options": [{
       "title": "是",
       "to": "9"
@@ -103,7 +103,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻月收入之和是否在居住地月平均工资的6倍以上且有经济实力在居住地换置三房？",
-    "id": "q9",
+    "id": "9",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -116,7 +116,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻双方父母是否至少一方健在、身体状况良好且为当地居民？（或有住房可在当地居住）",
-    "id": "q10",
+    "id": "10",
     "options": [{
       "title": "是",
       "to": "11"
@@ -128,7 +128,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "妻子年龄是否小于35岁且夫妻月收入之和在居住地月平均工资的5倍以上且第一胎为女孩？",
-    "id": "q11",
+    "id": "11",
     "options": [{
       "title": "是",
       "toEnd": true,
@@ -141,7 +141,7 @@ module.exports = {
     "isLast": false
   }, {
     "title": "夫妻月收入之和是否在居住地月平均工资的4倍以上？",
-    "id": "q12",
+    "id": "12",
     "options": [{
       "title": "是",
       "toEnd": true,

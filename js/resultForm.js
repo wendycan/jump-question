@@ -15,14 +15,12 @@ var ResultForm = React.createClass({
     options.splice(index,1);
     this.setState({options: options});
   },
-  handleSubmit: function() {
-    this.props.onResultSubmit({result: this.state.options, count:this.count});
-  },
   handleResultOptionSubmit: function(option) {
     option.id = 'r' + this.count++;
     var options = this.state.options;
     options.push(option);
     this.setState({options: options});
+    this.props.onResultSubmit({result: this.state.options, count:this.count})
   },
   handleSubmitForm: function (e) {
     e.preventDefault();
@@ -34,7 +32,6 @@ var ResultForm = React.createClass({
           <ResultOptionForm onResultOptionSubmit={this.handleResultOptionSubmit}/>
           <ResultOptions options={this.state.options} onDeleteOption={this.deleteOption} isEdit='true'/>
         </div>
-        <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>更新</button>
       </form>
     )
   }

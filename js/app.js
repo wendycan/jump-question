@@ -26,7 +26,7 @@ var MakerApp = React.createClass({
 
   handleResultSubmit: function(data) {
     this.r_count = data.count;
-    this.setState({result: data.result}, this.previewQuestion);
+    this.setState({result: data.result});
   },
 
   handleQuestionEditSubmit: function(question, id) {
