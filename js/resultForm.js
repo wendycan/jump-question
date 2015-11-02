@@ -3,9 +3,13 @@ var ResultOptionForm = require('./resultOptionForm');
 var ResultOptions = require('./resultOptions');
 
 var ResultForm = React.createClass({
+  count: 0,
+
   getInitialState: function() {
+    this.count = this.props.count;
     return {options: this.props.data};
   },
+
   deleteOption: function(index) {
     var options = this.state.options;
     options.splice(index,1);
@@ -13,9 +17,10 @@ var ResultForm = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
-    this.props.onResultSubmit(this.state.options);
+    this.props.onResultSubmit({result: this.state.options, count:this.count});
   },
   handleResultOptionSubmit: function(option) {
+    option.id = this.count++;
     var options = this.state.options;
     options.push(option);
     this.setState({options: options});

@@ -9,6 +9,8 @@ var Result = require('./result');
 var data = require('../public/data');
 
 var MakerApp = React.createClass({
+  count: 0,
+
   getInitialState: function() {
     // return data;
     return {questions: [], meta: {}, result: []};
@@ -16,12 +18,14 @@ var MakerApp = React.createClass({
 
   handleQuestionSubmit: function(question) {
     var questions = this.state.questions;
+    question.id = this.count++;
     questions.push(question);
     this.setState({questions: questions}, this.previewQuestion);
   },
 
-  handleResultSubmit: function(result) {
-    this.setState({result: result}, this.previewQuestion);
+  handleResultSubmit: function(data) {
+    this.count = data.count;
+    this.setState({result: data.result}, this.previewQuestion);
   },
 
   handleQuestionEditSubmit: function(question, id) {
@@ -39,7 +43,7 @@ var MakerApp = React.createClass({
 
   editResult: function() {
     React.render(
-      <ResultForm onResultSubmit={this.handleResultSubmit} data={this.state.result}/>,
+      <ResultForm onResultSubmit={this.handleResultSubmit} data={this.state.result} count={this.count}/>,
       document.getElementById('question-container')
     );
   },
@@ -61,7 +65,7 @@ var MakerApp = React.createClass({
       document.getElementById('question-container')
     );
     $('.question-box .top-buttons .btn').removeClass('active');
-    $('.question-box .top-buttons .col-md-2:nth-child(4) .btn').addClass('active');
+    $('.question-box .top-buttons .col-md-2:nth-child(3) .btn').addClass('active');
   },
 
   fetchCode: function (callback) {
